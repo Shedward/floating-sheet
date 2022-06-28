@@ -11,15 +11,35 @@ struct FloatingSheetUpdater {
     private let animationDuration: TimeInterval = 0.25
     private let sheetView: FloatingSheetView
     private let context: FloatingSheetContext
+    private let currentState: FloatingSheetState
 
-    init(sheetView: FloatingSheetView, context: FloatingSheetContext) {
+    init(sheetView: FloatingSheetView, context: FloatingSheetContext, to currentState: FloatingSheetState) {
         self.sheetView = sheetView
         self.context = context
+        self.currentState = currentState
     }
 
-    func updateState(animated: Bool, to currentState: FloatingSheetState) {
-        let newFrame = currentState.position.frame(context)
+    func updateState(animated: Bool) {
+        updateView(animated: animated) {
+            updatePosition()
+            updateOverlayAppearance()
+            updateShadow()
+            sheetView.floatingView.layoutIfNeeded()
+        }
 
+        updateMask(animated: animated)
+    }
+
+    private func updatePosition() {
+        let newFrame = currentState.position.frame(context)
+        sheetView.floatingView.frame = newFrame
+    }
+
+    private func updateOverlayAppearance() {
+        sheetView.overlayView.backgroundColor = currentState.appearance.overlayColor
+    }
+
+    private func updateMask(animated: Bool) {
         let frame = currentState.mask.mask(context) ?? sheetView.floatingView.bounds
         let cornerRadius = currentState.appearance.cornerRadius
         let position = CGPoint(
@@ -28,32 +48,34 @@ struct FloatingSheetUpdater {
         )
         let bounds = CGRect(origin: .zero, size: frame.size)
 
-        updateView(animated: animated) {
-            sheetView.floatingView.frame = newFrame
-            sheetView.overlayView.backgroundColor = currentState.appearance.overlayColor
-
-            sheetView.shadowLayer.shadowColor = currentState.appearance.shadow.color?.cgColor
-            sheetView.shadowLayer.shadowOffset = currentState.appearance.shadow.offset
-            sheetView.shadowLayer.shadowRadius = currentState.appearance.shadow.radius
-            sheetView.shadowLayer.shadowOpacity = currentState.appearance.shadow.opacity
-            sheetView.shadowLayer.position = position
-            sheetView.shadowLayer.cornerRadius = cornerRadius
-            sheetView.shadowLayer.bounds = bounds
-
-            sheetView.floatingView.layoutIfNeeded()
-        }
-
         if animated {
             CATransaction.begin()
             animateLayer(layer: sheetView.maskLayer, keyPath: "cornerRadius", oldValue: sheetView.maskLayer.cornerRadius, newValue: cornerRadius)
             animateLayer(layer: sheetView.maskLayer, keyPath: "position", oldValue: sheetView.maskLayer.position, newValue: position)
             animateLayer(layer: sheetView.maskLayer, keyPath: "bounds", oldValue: sheetView.maskLayer.bounds, newValue: bounds)
             CATransaction.commit()
+
+            updateView(animated: true) {
+                sheetView.shadowLayer.position = position
+                sheetView.shadowLayer.cornerRadius = cornerRadius
+                sheetView.shadowLayer.bounds = bounds
+            }
         } else {
             sheetView.maskLayer.cornerRadius = cornerRadius
             sheetView.maskLayer.position = position
             sheetView.maskLayer.bounds = bounds
+
+            sheetView.shadowLayer.position = position
+            sheetView.shadowLayer.cornerRadius = cornerRadius
+            sheetView.shadowLayer.bounds = bounds
         }
+    }
+
+    private func updateShadow() {
+        sheetView.shadowLayer.shadowColor = currentState.appearance.shadow.color?.cgColor
+        sheetView.shadowLayer.shadowOffset = currentState.appearance.shadow.offset
+        sheetView.shadowLayer.shadowRadius = currentState.appearance.shadow.radius
+        sheetView.shadowLayer.shadowOpacity = currentState.appearance.shadow.opacity
     }
 
     private func animateLayer<Value>(

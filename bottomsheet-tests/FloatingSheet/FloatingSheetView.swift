@@ -88,7 +88,7 @@ final class FloatingSheetView: UIView {
             contentView: contentView
         )
 
-        let updater = FloatingSheetUpdater(sheetView: self, context: context)
-        updater.updateState(animated: animated, to: currentState)
+        let updater = FloatingSheetUpdater(sheetView: self, context: context, to: currentState)
+        updater.updateState(animated: animated)
     }
 }
