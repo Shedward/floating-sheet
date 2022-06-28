@@ -17,6 +17,8 @@ final class FloatingSheetViewController: UIViewController {
         self.contentController = contentController
         super.init(nibName: nil, bundle: nil)
         setContentController(contentController)
+
+        modalPresentationStyle = .overFullScreen
     }
 
     required init?(coder: NSCoder) {
@@ -29,13 +31,18 @@ final class FloatingSheetViewController: UIViewController {
 
     private func setContentController(_ controller: ContentController) {
         controller.willMove(toParent: self)
+        contentController.floatingSheetController = self
         contentView.setContent(controller.view)
 
         contentView.setStates(controller.floatingStates)
         if let initialState = controller.floatingStates.first {
-            contentView.setCurrentState(initialState)
+            contentView.setCurrentState(initialState, animated: false)
         }
 
         addChild(controller)
+    }
+
+    func setState(_ state: FloatingSheetState, animated: Bool) {
+        contentView.setCurrentState(state, animated: animated)
     }
 }

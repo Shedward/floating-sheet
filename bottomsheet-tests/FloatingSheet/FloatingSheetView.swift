@@ -55,9 +55,12 @@ final class FloatingSheetView: UIView {
         self.states = states
     }
 
-    func setCurrentState(_ state: FloatingSheetState) {
+    func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
         currentState = state
-        updateState()
+        updateAnimated(animated) {
+            self.updateState()
+            self.layoutIfNeeded()
+        }
     }
 
     private func updateState() {
@@ -74,5 +77,13 @@ final class FloatingSheetView: UIView {
         )
         let newFrame = currentState.position.frame(context)
         contentContainer.frame = newFrame
+    }
+
+    private func updateAnimated(_ animated: Bool, actions: @escaping () -> Void) {
+        if animated {
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseOut], animations: actions)
+        } else {
+            actions()
+        }
     }
 }

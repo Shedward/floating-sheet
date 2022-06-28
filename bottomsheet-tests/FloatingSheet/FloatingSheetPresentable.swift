@@ -7,6 +7,8 @@
 
 import UIKit
 
-protocol FloatingSheetPresentable {
+protocol FloatingSheetPresentable: AnyObject {
+
+    var floatingSheetController: FloatingSheetViewController? { get set }
     var floatingStates: [FloatingSheetState] { get }
 }

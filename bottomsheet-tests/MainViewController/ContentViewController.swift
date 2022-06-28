@@ -8,6 +8,7 @@
 import UIKit
 
 final class ContentViewController: UIViewController {
+    weak var floatingSheetController: FloatingSheetViewController?
 
     private let fullState = FloatingSheetState(id: "full", position: .full())
     private let shrinkenState = FloatingSheetState(id: "shrinken", position: .absoluteBottomHeight(100))
@@ -16,6 +17,16 @@ final class ContentViewController: UIViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let viewController: ContentViewController = storyboard.instantiateViewController(identifier: "ContentViewController")
         return viewController
+    }
+
+    @IBAction
+    func switchToFull() {
+        floatingSheetController?.setState(fullState, animated: true)
+    }
+
+    @IBAction
+    func switchToShrink() {
+        floatingSheetController?.setState(shrinkenState, animated: true)
     }
 }
 
