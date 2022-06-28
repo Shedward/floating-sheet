@@ -51,13 +51,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="So5-ub-7d5">
-                                <rect key="frame" x="16" y="60" width="382" height="31"/>
+                                <rect key="frame" x="16" y="110" width="382" height="31"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2j0-BX-gxc">
                                         <rect key="frame" x="0.0" y="0.0" width="116.5" height="31"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="One"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Full"/>
                                         <connections>
                                             <action selector="switchToFull" destination="0Of-Ev-e8Y" eventType="touchUpInside" id="KTv-pJ-kwq"/>
                                         </connections>
@@ -66,7 +66,7 @@
                                         <rect key="frame" x="132.5" y="0.0" width="117" height="31"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Two"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Shrinked"/>
                                         <connections>
                                             <action selector="switchToShrink" destination="0Of-Ev-e8Y" eventType="touchUpInside" id="kUu-7Z-Rh8"/>
                                         </connections>
@@ -75,17 +75,25 @@
                                         <rect key="frame" x="265.5" y="0.0" width="116.5" height="31"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Three"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Minimal"/>
                                     </button>
                                 </subviews>
                             </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DEs-2P-iNB">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="94"/>
+                                <color key="backgroundColor" systemColor="systemPurpleColor"/>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="jUW-wh-0th"/>
                         <color key="backgroundColor" systemColor="systemIndigoColor"/>
                         <constraints>
+                            <constraint firstItem="So5-ub-7d5" firstAttribute="top" secondItem="DEs-2P-iNB" secondAttribute="bottom" constant="16" id="9li-Bc-YWD"/>
+                            <constraint firstAttribute="trailing" secondItem="DEs-2P-iNB" secondAttribute="trailing" id="YiH-XN-V9U"/>
                             <constraint firstAttribute="trailing" secondItem="So5-ub-7d5" secondAttribute="trailing" constant="16" id="ZdC-Xr-cm5"/>
+                            <constraint firstItem="DEs-2P-iNB" firstAttribute="leading" secondItem="7lq-8d-cxA" secondAttribute="leading" id="bMN-TW-4fd"/>
                             <constraint firstItem="So5-ub-7d5" firstAttribute="leading" secondItem="7lq-8d-cxA" secondAttribute="leading" constant="16" id="f2P-vb-wmI"/>
-                            <constraint firstItem="So5-ub-7d5" firstAttribute="top" secondItem="jUW-wh-0th" secondAttribute="top" constant="16" id="fhC-J9-MSb"/>
+                            <constraint firstItem="DEs-2P-iNB" firstAttribute="top" secondItem="7lq-8d-cxA" secondAttribute="top" id="rhQ-Px-6wS"/>
+                            <constraint firstItem="jUW-wh-0th" firstAttribute="top" secondItem="DEs-2P-iNB" secondAttribute="bottom" constant="-50" id="wdU-PW-yWW"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -100,6 +108,9 @@
         </systemColor>
         <systemColor name="systemIndigoColor">
             <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPurpleColor">
+            <color red="0.68627450980392157" green="0.32156862745098042" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

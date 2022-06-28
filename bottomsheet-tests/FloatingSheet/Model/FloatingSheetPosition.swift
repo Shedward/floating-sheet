@@ -20,20 +20,22 @@ struct FloatingSheetPosition {
         }
     }
 
-    static func relativeBottomHeight(_ relativeHeight: CGFloat) -> FloatingSheetPosition {
+    static func relativeBottomHeight(_ relativeHeight: CGFloat, extendBottom: Bool) -> FloatingSheetPosition {
         .init { context in
             let heigth = context.availableSize.height * relativeHeight
-            return FloatingSheetPosition.absoluteBottomHeight(heigth).frame(context)
+            return FloatingSheetPosition.absoluteBottomHeight(heigth, extendBottom: extendBottom).frame(context)
         }
     }
 
-    static func absoluteBottomHeight(_ absoluteHeight: CGFloat) -> FloatingSheetPosition {
+    static func absoluteBottomHeight(_ absoluteHeight: CGFloat, extendBottom: Bool) -> FloatingSheetPosition {
         .init { context in
             CGRect(
                 x: 0,
                 y: context.availableSize.height - absoluteHeight,
                 width: context.availableSize.width,
-                height: absoluteHeight
+                height: extendBottom
+                    ? context.availableSize.height
+                    : absoluteHeight
             )
         }
     }
