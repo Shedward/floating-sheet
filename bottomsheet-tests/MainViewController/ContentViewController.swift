@@ -28,7 +28,7 @@ final class ContentViewController: UIViewController {
 
         fullState.position = .full()
 
-        mediumState.position = .relativeBottomHeight(0.5, extendBottom: true)
+        mediumState.position = .relativeBottomHeight(0.5, extendBottom: false)
             .inseted(.init(top: 8, left: 8, bottom: 8, right: 8))
         mediumState.appearance.overlayColor = UIColor.black.withAlphaComponent(0.2)
         mediumState.appearance.cornerRadius = 24

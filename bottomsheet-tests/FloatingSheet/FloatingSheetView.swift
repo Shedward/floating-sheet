@@ -9,15 +9,15 @@ import QuartzCore
 import UIKit
 
 final class FloatingSheetView: UIView {
-    private let overlayView: UIView = UIView()
-    private let floatingView: UIView = UIView()
-    private let contentContainer: UIView = UIView()
+    let overlayView: UIView = UIView()
+    let floatingView: UIView = UIView()
+    let maskLayer: CALayer = .init()
+    let shadowLayer: CALayer = .init()
+
     private var contentView: UIView?
+    private let contentContainer: UIView = UIView()
     private var states: [FloatingSheetState] = []
     private var currentState: FloatingSheetState?
-
-    private var maskLayer: CALayer = .init()
-    private var shadowLayer: CALayer = .init()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -87,63 +87,8 @@ final class FloatingSheetView: UIView {
             availableSize: overlayView.bounds.size,
             contentView: contentView
         )
-        let newFrame = currentState.position.frame(context)
 
-        let frame = currentState.mask.mask(context) ?? floatingView.bounds
-        let cornerRadius = currentState.appearance.cornerRadius
-        let position = CGPoint(
-            x: 0.5 * frame.width + frame.origin.x,
-            y: 0.5 * frame.height + frame.origin.y
-        )
-        let bounds = CGRect(origin: .zero, size: frame.size)
-
-        updateAnimated(animated) {
-            self.floatingView.frame = newFrame
-            self.overlayView.backgroundColor = currentState.appearance.overlayColor
-
-            self.shadowLayer.shadowColor = currentState.appearance.shadow.color?.cgColor
-            self.shadowLayer.shadowOffset = currentState.appearance.shadow.offset
-            self.shadowLayer.shadowRadius = currentState.appearance.shadow.radius
-            self.shadowLayer.shadowOpacity = currentState.appearance.shadow.opacity
-            self.shadowLayer.position = position
-            self.shadowLayer.cornerRadius = cornerRadius
-            self.shadowLayer.bounds = bounds
-
-            self.floatingView.layoutIfNeeded()
-        }
-
-        if animated {
-            CATransaction.begin()
-            animateLayer(layer: maskLayer, keyPath: "cornerRadius", oldValue: maskLayer.cornerRadius, newValue: cornerRadius)
-            animateLayer(layer: maskLayer, keyPath: "position", oldValue: maskLayer.position, newValue: position)
-            animateLayer(layer: maskLayer, keyPath: "bounds", oldValue: maskLayer.bounds, newValue: bounds)
-            CATransaction.commit()
-        } else {
-            maskLayer.cornerRadius = cornerRadius
-            maskLayer.position = position
-            maskLayer.bounds = bounds
-        }
-    }
-
-    private func animateLayer<Value>(
-        layer: CALayer,
-        keyPath: String,
-        oldValue: Value,
-        newValue: Value
-    ) {
-        let animation = CABasicAnimation(keyPath: keyPath)
-        animation.fromValue = oldValue
-        animation.toValue = newValue
-        animation.duration = 0.25
-        animation.timingFunction = .init(name: .easeOut)
-        layer.add(animation, forKey: keyPath)
-    }
-
-    private func updateAnimated(_ animated: Bool, actions: @escaping () -> Void) {
-        if animated {
-            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseOut], animations: actions)
-        } else {
-            actions()
-        }
+        let updater = FloatingSheetUpdater(sheetView: self, context: context)
+        updater.updateState(animated: animated, to: currentState)
     }
 }

@@ -23,7 +23,8 @@
 		63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */; };
 		63C78F80286B0E4E001FF97E /* FloatingSheetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */; };
 		63C78F83286B5097001FF97E /* FloatingSheetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F82286B5097001FF97E /* FloatingSheetContext.swift */; };
-		63C78F85286B512E001FF97E /* FloatingSheetAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */; };
+		63C78F85286B512E001FF97E /* FloatingSheetUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F84286B512E001FF97E /* FloatingSheetUpdater.swift */; };
+		63C78F87286B6412001FF97E /* FloatingSheetInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F86286B6412001FF97E /* FloatingSheetInteractions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +46,8 @@
 		63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetMask.swift; sourceTree = "<group>"; };
 		63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetAppearance.swift; sourceTree = "<group>"; };
 		63C78F82286B5097001FF97E /* FloatingSheetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetContext.swift; sourceTree = "<group>"; };
-		63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetAnimator.swift; sourceTree = "<group>"; };
+		63C78F84286B512E001FF97E /* FloatingSheetUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetUpdater.swift; sourceTree = "<group>"; };
+		63C78F86286B6412001FF97E /* FloatingSheetInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetInteractions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */,
 				63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */,
 				63C78F82286B5097001FF97E /* FloatingSheetContext.swift */,
+				63C78F86286B6412001FF97E /* FloatingSheetInteractions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -135,7 +138,7 @@
 		63C78F81286B4F38001FF97E /* Transitioning */ = {
 			isa = PBXGroup;
 			children = (
-				63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */,
+				63C78F84286B512E001FF97E /* FloatingSheetUpdater.swift */,
 			);
 			path = Transitioning;
 			sourceTree = "<group>";
@@ -211,7 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63C78F85286B512E001FF97E /* FloatingSheetAnimator.swift in Sources */,
+				63C78F85286B512E001FF97E /* FloatingSheetUpdater.swift in Sources */,
 				63C78F83286B5097001FF97E /* FloatingSheetContext.swift in Sources */,
 				63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */,
 				63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */,
@@ -223,6 +226,7 @@
 				63C78F74286AF466001FF97E /* UIView+TinyConstraints.swift in Sources */,
 				63C78F80286B0E4E001FF97E /* FloatingSheetAppearance.swift in Sources */,
 				63C78F6D2869C963001FF97E /* FloatingSheetViewController.swift in Sources */,
+				63C78F87286B6412001FF97E /* FloatingSheetInteractions.swift in Sources */,
 				63C78F712869CDB1001FF97E /* FloatingSheetView.swift in Sources */,
 				63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */,
 			);
@@ -371,7 +375,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AZ4B3VLD93;
+				DEVELOPMENT_TEAM = SKRU67QKG5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "bottomsheet-tests/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -399,7 +403,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AZ4B3VLD93;
+				DEVELOPMENT_TEAM = SKRU67QKG5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "bottomsheet-tests/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
