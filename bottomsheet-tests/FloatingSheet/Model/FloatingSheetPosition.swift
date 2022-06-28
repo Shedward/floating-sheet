@@ -14,6 +14,13 @@ struct FloatingSheetPosition {
         .init(frame: frame)
     }
 
+    static func insets(_ insets: UIEdgeInsets) -> FloatingSheetPosition {
+        .init { context in
+            let frame = CGRect(origin: .zero, size: context.availableSize)
+            return frame.inset(by: insets)
+        }
+    }
+
     static func full() -> FloatingSheetPosition {
         .init { context in
             CGRect(origin: .zero, size: context.availableSize)

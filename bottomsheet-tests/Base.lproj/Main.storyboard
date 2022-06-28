@@ -76,6 +76,9 @@
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Minimal"/>
+                                        <connections>
+                                            <action selector="switchToMinimal" destination="0Of-Ev-e8Y" eventType="touchUpInside" id="vgE-Ic-y3g"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
@@ -96,6 +99,9 @@
                             <constraint firstItem="jUW-wh-0th" firstAttribute="top" secondItem="DEs-2P-iNB" secondAttribute="bottom" constant="-50" id="wdU-PW-yWW"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="stackView" destination="So5-ub-7d5" id="bpI-xZ-BLV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fx3-va-Dco" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
