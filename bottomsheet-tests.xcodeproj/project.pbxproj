@@ -22,6 +22,8 @@
 		63C78F7C286B0843001FF97E /* FloatingSheetPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */; };
 		63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */; };
 		63C78F80286B0E4E001FF97E /* FloatingSheetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */; };
+		63C78F83286B5097001FF97E /* FloatingSheetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F82286B5097001FF97E /* FloatingSheetContext.swift */; };
+		63C78F85286B512E001FF97E /* FloatingSheetAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetPosition.swift; sourceTree = "<group>"; };
 		63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetMask.swift; sourceTree = "<group>"; };
 		63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetAppearance.swift; sourceTree = "<group>"; };
+		63C78F82286B5097001FF97E /* FloatingSheetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetContext.swift; sourceTree = "<group>"; };
+		63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetAnimator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +94,7 @@
 		63C78F6B2869C836001FF97E /* FloatingSheet */ = {
 			isa = PBXGroup;
 			children = (
+				63C78F81286B4F38001FF97E /* Transitioning */,
 				63C78F78286AFE97001FF97E /* Model */,
 				63C78F6C2869C963001FF97E /* FloatingSheetViewController.swift */,
 				63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */,
@@ -122,8 +127,17 @@
 				63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */,
 				63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */,
 				63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */,
+				63C78F82286B5097001FF97E /* FloatingSheetContext.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		63C78F81286B4F38001FF97E /* Transitioning */ = {
+			isa = PBXGroup;
+			children = (
+				63C78F84286B512E001FF97E /* FloatingSheetAnimator.swift */,
+			);
+			path = Transitioning;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +211,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63C78F85286B512E001FF97E /* FloatingSheetAnimator.swift in Sources */,
+				63C78F83286B5097001FF97E /* FloatingSheetContext.swift in Sources */,
 				63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */,
 				63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */,
 				63C78F5C2869C7FC001FF97E /* ViewController.swift in Sources */,

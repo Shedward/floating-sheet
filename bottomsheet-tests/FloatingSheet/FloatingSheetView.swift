@@ -10,11 +10,14 @@ import UIKit
 
 final class FloatingSheetView: UIView {
     private let overlayView: UIView = UIView()
+    private let floatingView: UIView = UIView()
     private let contentContainer: UIView = UIView()
     private var contentView: UIView?
     private var states: [FloatingSheetState] = []
     private var currentState: FloatingSheetState?
+
     private var maskLayer: CALayer = .init()
+    private var shadowLayer: CALayer = .init()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,7 +38,14 @@ final class FloatingSheetView: UIView {
         maskLayer.bounds = bounds
         maskLayer.backgroundColor = UIColor.black.cgColor
         contentContainer.layer.mask = maskLayer
-        addSubview(contentContainer)
+
+        shadowLayer.backgroundColor = UIColor.black.cgColor
+        floatingView.layer.insertSublayer(shadowLayer, below: contentContainer.layer)
+
+        floatingView.addSubview(contentContainer)
+        contentContainer.edgesToSuperview()
+
+        addSubview(floatingView)
         updateState(animated: false)
     }
 
@@ -79,19 +89,28 @@ final class FloatingSheetView: UIView {
         )
         let newFrame = currentState.position.frame(context)
 
-        updateAnimated(animated) {
-            self.contentContainer.frame = newFrame
-            self.overlayView.backgroundColor = currentState.appearance.overlayColor
-            self.contentContainer.layoutIfNeeded()
-        }
-
-        let frame = currentState.mask.mask(context) ?? contentContainer.bounds
+        let frame = currentState.mask.mask(context) ?? floatingView.bounds
         let cornerRadius = currentState.appearance.cornerRadius
         let position = CGPoint(
             x: 0.5 * frame.width + frame.origin.x,
             y: 0.5 * frame.height + frame.origin.y
         )
         let bounds = CGRect(origin: .zero, size: frame.size)
+
+        updateAnimated(animated) {
+            self.floatingView.frame = newFrame
+            self.overlayView.backgroundColor = currentState.appearance.overlayColor
+
+            self.shadowLayer.shadowColor = currentState.appearance.shadow.color?.cgColor
+            self.shadowLayer.shadowOffset = currentState.appearance.shadow.offset
+            self.shadowLayer.shadowRadius = currentState.appearance.shadow.radius
+            self.shadowLayer.shadowOpacity = currentState.appearance.shadow.opacity
+            self.shadowLayer.position = position
+            self.shadowLayer.cornerRadius = cornerRadius
+            self.shadowLayer.bounds = bounds
+
+            self.floatingView.layoutIfNeeded()
+        }
 
         if animated {
             CATransaction.begin()

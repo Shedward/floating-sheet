@@ -32,6 +32,12 @@ final class ContentViewController: UIViewController {
             .inseted(.init(top: 8, left: 8, bottom: 8, right: 8))
         mediumState.appearance.overlayColor = UIColor.black.withAlphaComponent(0.2)
         mediumState.appearance.cornerRadius = 24
+        mediumState.appearance.shadow = .init(
+            color: .black,
+            offset: .zero,
+            radius: 4.0,
+            opacity: 0.4
+        )
 
         minimalState.position = .relativeBottomHeight(0.25, extendBottom: true)
             .inseted(.init(top: 16, left: 16, bottom: 16, right: 16))
