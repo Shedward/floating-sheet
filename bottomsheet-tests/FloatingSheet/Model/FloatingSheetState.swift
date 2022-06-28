@@ -20,7 +20,7 @@ struct FloatingSheetState {
 
     init(
         id: String,
-        position: FloatingSheetPosition,
+        position: FloatingSheetPosition = .full(),
         mask: FloatingSheetMask = .none(),
         appearance: FloatingSheetAppearance = .init()
     ) {

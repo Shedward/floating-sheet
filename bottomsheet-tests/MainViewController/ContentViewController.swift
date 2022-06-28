@@ -10,22 +10,9 @@ import UIKit
 final class ContentViewController: UIViewController {
     weak var floatingSheetController: FloatingSheetViewController?
 
-    private let fullState = FloatingSheetState(
-        id: "full",
-        position: .full()
-    )
-
-    private var shrinkenState = FloatingSheetState(
-        id: "shrinken",
-        position: .relativeBottomHeight(0.5, extendBottom: true)
-            .inseted(.init(top: 8, left: 8, bottom: 8, right: 8))
-    )
-
-    private var minimalState = FloatingSheetState(
-        id: "minimal",
-        position: .relativeBottomHeight(0.25, extendBottom: true)
-            .inseted(.init(top: 16, left: 16, bottom: 16, right: 16))
-    )
+    private var fullState = FloatingSheetState(id: "full")
+    private var mediumState = FloatingSheetState(id: "medium")
+    private var minimalState = FloatingSheetState(id: "minimal")
 
     @IBOutlet
     private var stackView: UIStackView!
@@ -38,11 +25,19 @@ final class ContentViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        shrinkenState.appearance.overlayColor = UIColor.black.withAlphaComponent(0.2)
-        shrinkenState.appearance.cornerRadius = 24
 
+        fullState.position = .full()
+
+        mediumState.position = .relativeBottomHeight(0.5, extendBottom: true)
+            .inseted(.init(top: 8, left: 8, bottom: 8, right: 8))
+        mediumState.appearance.overlayColor = UIColor.black.withAlphaComponent(0.2)
+        mediumState.appearance.cornerRadius = 24
+
+        minimalState.position = .relativeBottomHeight(0.25, extendBottom: true)
+            .inseted(.init(top: 16, left: 16, bottom: 16, right: 16))
         minimalState.mask = .aroundView(stackView)
             .inseted(.init(top: -4, left: -4, bottom: -4, right: -4))
+        minimalState.appearance.cornerRadius = 8
     }
 
     @IBAction
@@ -52,7 +47,7 @@ final class ContentViewController: UIViewController {
 
     @IBAction
     func switchToShrink() {
-        floatingSheetController?.setState(shrinkenState, animated: true)
+        floatingSheetController?.setState(mediumState, animated: true)
     }
 
     @IBAction
@@ -63,6 +58,6 @@ final class ContentViewController: UIViewController {
 
 extension ContentViewController: FloatingSheetPresentable {
     var floatingStates: [FloatingSheetState] {
-        [shrinkenState, fullState]
+        [minimalState, mediumState, fullState]
     }
 }

@@ -81,6 +81,7 @@ final class FloatingSheetView: UIView {
 
         updateAnimated(animated) {
             self.contentContainer.frame = newFrame
+            self.overlayView.backgroundColor = currentState.appearance.overlayColor
             self.contentContainer.layoutIfNeeded()
         }
 
