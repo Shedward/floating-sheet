@@ -13,6 +13,15 @@
 		63C78F5F2869C7FC001FF97E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C78F5D2869C7FC001FF97E /* Main.storyboard */; };
 		63C78F612869C7FD001FF97E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C78F602869C7FD001FF97E /* Assets.xcassets */; };
 		63C78F642869C7FD001FF97E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C78F622869C7FD001FF97E /* LaunchScreen.storyboard */; };
+		63C78F6D2869C963001FF97E /* FloatingSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F6C2869C963001FF97E /* FloatingSheetViewController.swift */; };
+		63C78F6F2869CB29001FF97E /* FloatingSheetPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */; };
+		63C78F712869CDB1001FF97E /* FloatingSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F702869CDB1001FF97E /* FloatingSheetView.swift */; };
+		63C78F74286AF466001FF97E /* UIView+TinyConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F73286AF466001FF97E /* UIView+TinyConstraints.swift */; };
+		63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F76286AF74F001FF97E /* ContentViewController.swift */; };
+		63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F79286AFEAC001FF97E /* FloatingSheetState.swift */; };
+		63C78F7C286B0843001FF97E /* FloatingSheetPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */; };
+		63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */; };
+		63C78F80286B0E4E001FF97E /* FloatingSheetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +33,15 @@
 		63C78F602869C7FD001FF97E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63C78F632869C7FD001FF97E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63C78F652869C7FD001FF97E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		63C78F6C2869C963001FF97E /* FloatingSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetViewController.swift; sourceTree = "<group>"; };
+		63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetPresentable.swift; sourceTree = "<group>"; };
+		63C78F702869CDB1001FF97E /* FloatingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetView.swift; sourceTree = "<group>"; };
+		63C78F73286AF466001FF97E /* UIView+TinyConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+TinyConstraints.swift"; sourceTree = "<group>"; };
+		63C78F76286AF74F001FF97E /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
+		63C78F79286AFEAC001FF97E /* FloatingSheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetState.swift; sourceTree = "<group>"; };
+		63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetPosition.swift; sourceTree = "<group>"; };
+		63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetMask.swift; sourceTree = "<group>"; };
+		63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetAppearance.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +74,56 @@
 		63C78F562869C7FC001FF97E /* bottomsheet-tests */ = {
 			isa = PBXGroup;
 			children = (
+				63C78F75286AF67F001FF97E /* MainViewController */,
+				63C78F722869D95D001FF97E /* TemporaryBridges */,
+				63C78F6B2869C836001FF97E /* FloatingSheet */,
 				63C78F572869C7FC001FF97E /* AppDelegate.swift */,
 				63C78F592869C7FC001FF97E /* SceneDelegate.swift */,
-				63C78F5B2869C7FC001FF97E /* ViewController.swift */,
 				63C78F5D2869C7FC001FF97E /* Main.storyboard */,
 				63C78F602869C7FD001FF97E /* Assets.xcassets */,
 				63C78F622869C7FD001FF97E /* LaunchScreen.storyboard */,
 				63C78F652869C7FD001FF97E /* Info.plist */,
 			);
 			path = "bottomsheet-tests";
+			sourceTree = "<group>";
+		};
+		63C78F6B2869C836001FF97E /* FloatingSheet */ = {
+			isa = PBXGroup;
+			children = (
+				63C78F78286AFE97001FF97E /* Model */,
+				63C78F6C2869C963001FF97E /* FloatingSheetViewController.swift */,
+				63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */,
+				63C78F702869CDB1001FF97E /* FloatingSheetView.swift */,
+			);
+			path = FloatingSheet;
+			sourceTree = "<group>";
+		};
+		63C78F722869D95D001FF97E /* TemporaryBridges */ = {
+			isa = PBXGroup;
+			children = (
+				63C78F73286AF466001FF97E /* UIView+TinyConstraints.swift */,
+			);
+			path = TemporaryBridges;
+			sourceTree = "<group>";
+		};
+		63C78F75286AF67F001FF97E /* MainViewController */ = {
+			isa = PBXGroup;
+			children = (
+				63C78F5B2869C7FC001FF97E /* ViewController.swift */,
+				63C78F76286AF74F001FF97E /* ContentViewController.swift */,
+			);
+			path = MainViewController;
+			sourceTree = "<group>";
+		};
+		63C78F78286AFE97001FF97E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				63C78F79286AFEAC001FF97E /* FloatingSheetState.swift */,
+				63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */,
+				63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */,
+				63C78F7F286B0E4E001FF97E /* FloatingSheetAppearance.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,9 +197,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */,
+				63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */,
 				63C78F5C2869C7FC001FF97E /* ViewController.swift in Sources */,
+				63C78F7C286B0843001FF97E /* FloatingSheetPosition.swift in Sources */,
+				63C78F6F2869CB29001FF97E /* FloatingSheetPresentable.swift in Sources */,
 				63C78F582869C7FC001FF97E /* AppDelegate.swift in Sources */,
 				63C78F5A2869C7FC001FF97E /* SceneDelegate.swift in Sources */,
+				63C78F74286AF466001FF97E /* UIView+TinyConstraints.swift in Sources */,
+				63C78F80286B0E4E001FF97E /* FloatingSheetAppearance.swift in Sources */,
+				63C78F6D2869C963001FF97E /* FloatingSheetViewController.swift in Sources */,
+				63C78F712869CDB1001FF97E /* FloatingSheetView.swift in Sources */,
+				63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
