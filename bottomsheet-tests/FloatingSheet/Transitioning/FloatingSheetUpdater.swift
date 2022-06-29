@@ -8,7 +8,8 @@
 import UIKit
 
 struct FloatingSheetUpdater {
-    private let animationDuration: TimeInterval = 0.25
+    static let animationDuration: TimeInterval = 0.25
+
     private let sheetView: FloatingSheetView
     private let context: FloatingSheetContext
     private let currentState: FloatingSheetState
@@ -30,16 +31,16 @@ struct FloatingSheetUpdater {
         updateMask(animated: animated)
     }
 
-    private func updatePosition() {
+    func updatePosition() {
         let newFrame = currentState.position.frame(context)
         sheetView.floatingView.frame = newFrame
     }
 
-    private func updateOverlayAppearance() {
+    func updateOverlayAppearance() {
         sheetView.overlayView.backgroundColor = currentState.appearance.overlayColor
     }
 
-    private func updateMask(animated: Bool) {
+    func updateMask(animated: Bool) {
         let frame = currentState.mask.mask(context) ?? sheetView.floatingView.bounds
         let cornerRadius = currentState.appearance.cornerRadius
         let position = CGPoint(
@@ -71,7 +72,7 @@ struct FloatingSheetUpdater {
         }
     }
 
-    private func updateShadow() {
+    func updateShadow() {
         sheetView.shadowLayer.shadowColor = currentState.appearance.shadow.color?.cgColor
         sheetView.shadowLayer.shadowOffset = currentState.appearance.shadow.offset
         sheetView.shadowLayer.shadowRadius = currentState.appearance.shadow.radius
@@ -87,7 +88,7 @@ struct FloatingSheetUpdater {
         let animation = CABasicAnimation(keyPath: keyPath)
         animation.fromValue = oldValue
         animation.toValue = newValue
-        animation.duration = animationDuration
+        animation.duration = Self.animationDuration
         animation.timingFunction = .init(name: .easeOut)
         layer.add(animation, forKey: keyPath)
     }
@@ -95,7 +96,7 @@ struct FloatingSheetUpdater {
     private func updateView(animated: Bool, _ actions: @escaping () -> Void) {
         if animated {
             UIView.animate(
-                withDuration: animationDuration,
+                withDuration: Self.animationDuration,
                 delay: 0,
                 options: [.curveEaseOut]
             ) {
