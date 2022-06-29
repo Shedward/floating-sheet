@@ -21,7 +21,7 @@ final class FloatingSheetView: UIView {
     private var states: [FloatingSheetState] = []
     private var draggingBehaviour: FloatingSheetDraggingBehaviour?
 
-    private var shouldUpdateAfterLayout: Bool = true
+    var shouldUpdateAfterLayout: Bool = true
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,6 +48,7 @@ final class FloatingSheetView: UIView {
         maskingView.backgroundColor = .white
         contentContainer.mask = maskingView
 
+        contentContainer.translatesAutoresizingMaskIntoConstraints = false
         floatingView.addSubview(contentContainer)
         contentContainer.edgesToSuperview()
 
@@ -56,6 +57,7 @@ final class FloatingSheetView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        print("FloatingSheetView.layoutSubviews() shouldUpdateAfterLayout = \(shouldUpdateAfterLayout)")
 
         if shouldUpdateAfterLayout {
             shouldUpdateAfterLayout = false
@@ -83,20 +85,20 @@ final class FloatingSheetView: UIView {
 
     func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
         guard state.id != currentState?.id else { return }
+        print("FloatingSheetView.setCurrentState(\(state.id), animated: \(animated))")
         currentState = state
         updateState(animated: animated)
     }
 
     private func updateState(animated: Bool) {
+        print("FloatingSheetView.updateState(animated: \(animated))")
         guard let currentState = currentState else { return }
-
-        print("Update state to \(currentState.id), animated: \(animated)")
 
         let updater = createUpdater(to: currentState)
         updater?.updateState(animated: animated)
     }
 
-    private func createUpdater(to state: FloatingSheetState) -> FloatingSheetUpdater? {
+    func createUpdater(to state: FloatingSheetState) -> FloatingSheetUpdater? {
         guard let context = currentContext() else { return nil }
 
         let updater = FloatingSheetUpdater(sheetView: self, context: context, to: state)
@@ -104,6 +106,7 @@ final class FloatingSheetView: UIView {
     }
 
     func currentContext() -> FloatingSheetContext? {
+        print("FloatingSheetView.currentContext()")
         guard let contentView = contentView else {
             return nil
         }

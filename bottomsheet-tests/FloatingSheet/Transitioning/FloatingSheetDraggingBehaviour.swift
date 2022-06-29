@@ -63,11 +63,29 @@ extension FloatingSheetDraggingBehaviour {
         guard let currentState = sheetView?.currentState else { return }
         guard let nextState = nextExpectedState(from: currentState, for: gesture) else { return }
 
-        let animator = UIViewPropertyAnimator(duration: FloatingSheetUpdater.animationDuration, curve: .easeOut)
-        animator.addAnimations {
-            self.sheetView?.setCurrentState(nextState, animated: false)
+        let timingProvider = UISpringTimingParameters(damping: 0.7, response: 0.4)
+        let animator = UIViewPropertyAnimator(duration: FloatingSheetUpdater.animationDuration, timingParameters: timingProvider)
+        animator.addAnimations { [weak sheetView] in
+            print("UIViewPropertyAnimator.animate(to: \(nextState.id))")
+            let updater = sheetView?.createUpdater(to: nextState)
+            updater?.updateState(animated: false)
+            sheetView?.layoutIfNeeded()
         }
-        animator.startAnimation()
+        animator.addCompletion { [weak sheetView] position in
+            print("UIViewPropertyAnimator.completed(position: \(String(describing: position))")
+            switch position {
+            case .end:
+                sheetView?.setCurrentState(nextState, animated: false)
+            case .start:
+                let updater = sheetView?.createUpdater(to: currentState)
+                updater?.updateState(animated: false)
+            case .current:
+                break
+            @unknown default:
+                break
+            }
+        }
+        animator.pauseAnimation()
 
         currentTransition = .init(
             animator: animator,
@@ -81,7 +99,6 @@ extension FloatingSheetDraggingBehaviour {
 
     private func updateTransition(gesture: Gesture) {
         guard let currentTransition = currentTransition else { return }
-        currentTransition.animator.pauseAnimation()
         let fractionComplete = currentTransition.progress(for: gesture)
         currentTransition.animator.fractionComplete = fractionComplete
     }

@@ -21,8 +21,11 @@ struct FloatingSheetUpdater {
     }
 
     func updateState(animated: Bool) {
+        print("FloatingSheetUpdater.updateState(animated: \(animated)), state = \(currentState.id)")
+
         updateAnimated(animated) {
             updatePosition()
+            print("FloatingSheetUpdater.floatingView.layoutIfNeeded()")
             sheetView.floatingView.layoutIfNeeded()
             updateOverlayAppearance()
             updateShadow()
@@ -32,14 +35,17 @@ struct FloatingSheetUpdater {
 
     func updatePosition() {
         let newFrame = currentState.position.frame(context)
+        print("FloatingSheetUpdater.updatePosition frame = \(newFrame)")
         sheetView.floatingView.frame = newFrame
     }
 
     func updateOverlayAppearance() {
+        print("FloatingSheetUpdater.updateOverlayAppearance")
         sheetView.overlayView.backgroundColor = currentState.appearance.overlayColor
     }
 
     func updateMask() {
+        print("FloatingSheetUpdater.updateMask")
         let frame = currentState.mask.mask(context) ?? sheetView.floatingView.bounds
         let cornerRadius = currentState.appearance.cornerRadius
 
@@ -51,6 +57,7 @@ struct FloatingSheetUpdater {
     }
 
     func updateShadow() {
+        print("FloatingSheetUpdater.updateShadow")
         sheetView.shadowView.layer.shadowColor = currentState.appearance.shadow.color?.cgColor
         sheetView.shadowView.layer.shadowOffset = currentState.appearance.shadow.offset
         sheetView.shadowView.layer.shadowRadius = currentState.appearance.shadow.radius
@@ -62,7 +69,7 @@ struct FloatingSheetUpdater {
             UIView.animate(
                 withDuration: Self.animationDuration,
                 delay: 0,
-                options: [.curveEaseOut]
+                options: [.curveEaseOut, .layoutSubviews]
             ) {
                 actions()
             }
