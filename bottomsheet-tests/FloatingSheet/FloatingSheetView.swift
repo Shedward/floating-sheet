@@ -11,8 +11,8 @@ import UIKit
 final class FloatingSheetView: UIView {
     let overlayView: UIView = UIView()
     let floatingView: UIView = UIView()
-    let maskLayer: CALayer = .init()
-    let shadowLayer: CALayer = .init()
+    let maskingView: UIView = UIView()
+    let shadowView: UIView = .init()
 
     private(set) var currentState: FloatingSheetState?
 
@@ -39,12 +39,10 @@ final class FloatingSheetView: UIView {
         addSubview(overlayView)
         overlayView.edgesToSuperview()
 
-        maskLayer.bounds = bounds
-        maskLayer.backgroundColor = UIColor.black.cgColor
-        contentContainer.layer.mask = maskLayer
-
-        shadowLayer.backgroundColor = UIColor.black.cgColor
-        floatingView.layer.insertSublayer(shadowLayer, below: contentContainer.layer)
+        floatingView.insertSubview(shadowView, belowSubview: contentContainer)
+        maskingView.frame = contentContainer.bounds
+        maskingView.backgroundColor = .white
+        contentContainer.mask = maskingView
 
         floatingView.addSubview(contentContainer)
         contentContainer.edgesToSuperview()
@@ -59,6 +57,13 @@ final class FloatingSheetView: UIView {
         if !isLayoutedInitially {
             updateState(animated: false)
             isLayoutedInitially = true
+        }
+
+        if let currentState = currentState {
+            let updater = createUpdater(to: currentState)
+            updater?.updateAnimated {
+                updater?.updateMask()
+            }
         }
     }
 
