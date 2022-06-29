@@ -17,7 +17,6 @@ class FloatingSheetDraggingBehaviour: NSObject {
     private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
         recognizer.addTarget(self, action: #selector(didPanFloatingSheet(recognizer:)))
-        recognizer.delegate = self
         return recognizer
     }()
 
@@ -61,9 +60,8 @@ extension FloatingSheetDraggingBehaviour {
 
     private func startTransition(gesture: Gesture) {
         guard currentTransition == nil else { return }
-        guard let context = sheetView?.currentContext() else { return }
         guard let currentState = sheetView?.currentState else { return }
-        guard let nextState = closestState(for: gesture, except: currentState) else { return }
+        guard let nextState = nextExpectedState(from: currentState, for: gesture) else { return }
 
         let animator = UIViewPropertyAnimator(duration: FloatingSheetUpdater.animationDuration, curve: .easeOut)
         animator.addAnimations {
@@ -75,9 +73,9 @@ extension FloatingSheetDraggingBehaviour {
             animator: animator,
             initialGesture: gesture,
             initialState: currentState,
-            initialPosition: anchorPoint(for: currentState.position.frame(context)),
+            initialPosition: position(for: currentState),
             finalState: nextState,
-            finalPosition: anchorPoint(for: nextState.position.frame(context))
+            finalPosition: position(for: nextState)
         )
     }
 
@@ -95,7 +93,8 @@ extension FloatingSheetDraggingBehaviour {
         if isCanceled {
             shouldReverseTransition = true
         } else {
-            let closesState = closestState(for: gesture, in: currentTransition)
+            let projectedFinalPosition = currentTransition.projectedPosition(for: gesture)
+            let closesState = closestState(to: projectedFinalPosition)
             shouldReverseTransition = closesState == currentTransition.initialState
         }
 
@@ -104,50 +103,61 @@ extension FloatingSheetDraggingBehaviour {
         self.currentTransition = nil
     }
 
-    private func closestState(
-        for gesture: Gesture,
-        in transition: Transition? = nil,
-        except excludingState: FloatingSheetState? = nil
-    ) -> FloatingSheetState? {
-        guard let context = sheetView?.currentContext() else { return nil }
+}
 
-        let gravitationPoints = states
-            .filter { $0.id != excludingState?.id }
-            .map { state -> GravitationPoint in
-                let frame = state.position.frame(context)
-                let expectedCenter = anchorPoint(for: frame)
-
-                let projectedCenter: CGPoint
-                if let transition = transition {
-                    projectedCenter = transition.projectedPosition(for: gesture)
-                } else {
-                    projectedCenter = gesture.projectedStopPoint()
-                }
-
-                let distance = projectedCenter.distance(to: expectedCenter)
-                let force = state.gravityCoefficient / (distance * distance + 1)
-
-                return GravitationPoint(
-                    center: expectedCenter,
-                    state: state,
-                    force: force
-                )
-            }
-
-        let strongestPoint = gravitationPoints.max { $0.force < $1.force }
-        return strongestPoint?.state
-    }
+extension FloatingSheetDraggingBehaviour {
 
     private func nextExpectedState(from currentState: FloatingSheetState, for gesture: Gesture) -> FloatingSheetState? {
-        return nil
+        let currentPosition = position(for: currentState)
+
+        let possibleStatesOrderedByY = positionedStates()
+            .filter { $0.state != currentState }
+            .sorted { $0.position.y < $1.position.y }
+
+        let nextState: FloatingSheetState?
+
+        if gesture.velocity.y > 0 {
+            nextState = possibleStatesOrderedByY
+                .first { $0.position.y > currentPosition.y }
+                .map { $0.state }
+        } else {
+            nextState = possibleStatesOrderedByY
+                .reversed()
+                .first { $0.position.y < currentPosition.y }
+                .map { $0.state }
+        }
+
+        return nextState
     }
 
-    private func anchorPoint(for frame: CGRect) -> CGPoint {
-        frame.origin
+    private func closestState(to position: CGPoint) -> FloatingSheetState? {
+        let yDistanceTo = { (positionedState: PositionedState) -> CGFloat in
+            abs(positionedState.position.y - position.y)
+        }
+        let closestState = positionedStates()
+            .min { yDistanceTo($0) < yDistanceTo($1) }
+            .map { $0.state }
+
+        return closestState
+    }
+
+    private func position(for state: FloatingSheetState) -> CGPoint {
+        guard let context = sheetView?.currentContext() else { return .zero }
+        let frame = state.position.frame(context)
+        return frame.origin
+    }
+
+    private func positionedStates() -> [PositionedState] {
+        states.map { PositionedState(state: $0, position: position(for: $0)) }
     }
 }
 
 extension FloatingSheetDraggingBehaviour {
+    private struct PositionedState {
+        let state: FloatingSheetState
+        let position: CGPoint
+    }
+
     private struct Gesture {
         var center: CGPoint
         var velocity: CGPoint
@@ -166,12 +176,6 @@ extension FloatingSheetDraggingBehaviour {
 
             return projectedPoint
         }
-    }
-
-    private struct GravitationPoint {
-        let center: CGPoint
-        let state: FloatingSheetState
-        let force: CGFloat
     }
 
     private struct Transition {
@@ -199,7 +203,4 @@ extension FloatingSheetDraggingBehaviour {
             return progress
         }
     }
-}
-
-extension FloatingSheetDraggingBehaviour: UIGestureRecognizerDelegate {
 }

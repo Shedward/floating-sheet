@@ -41,7 +41,6 @@ final class ContentViewController: UIViewController {
 
         minimalState.position = .relativeBottomHeight(0.25, extendBottom: false)
         minimalState.mask = .insets(.init(top: 50, left: 0, bottom: 0, right: 0))
-        minimalState.gravityCoefficient = 0.5
     }
 
     @IBAction

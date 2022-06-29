@@ -13,7 +13,6 @@ struct FloatingSheetState {
     var mask: FloatingSheetMask = .none()
     var appearance: FloatingSheetAppearance = .init()
     var interaction: FloatingSheetInteractions = .init()
-    var gravityCoefficient: CGFloat = 1.0
 
     init(id: String) {
         self.id = id
