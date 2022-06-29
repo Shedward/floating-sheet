@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import simd
 
 class FloatingSheetDraggingBehaviour: NSObject {
     private weak var sheetView: FloatingSheetView?
@@ -23,7 +24,6 @@ class FloatingSheetDraggingBehaviour: NSObject {
     init(in sheetView: FloatingSheetView, states: [FloatingSheetState]) {
         self.sheetView = sheetView
         self.states = states
-
         super.init()
 
         sheetView.floatingView.addGestureRecognizer(panGestureRecognizer)
@@ -40,15 +40,18 @@ extension FloatingSheetDraggingBehaviour {
         guard let sheetView = sheetView else { return }
 
         let position = recognizer.location(in: sheetView)
-        let gesture = Gesture(center: position)
+        let velocity = recognizer.velocity(in: sheetView)
+        let gesture = Gesture(center: position, velocity: velocity)
 
         switch recognizer.state {
         case .began:
             startTransition(gesture: gesture)
         case .changed:
             updateTransition(gesture: gesture)
-        case .ended, .cancelled, .failed:
-            finishTransition(gesture: gesture)
+        case .ended:
+            finishTransition(gesture: gesture, isCanceled: false)
+        case .cancelled, .failed:
+            finishTransition(gesture: gesture, isCanceled: true)
         case .possible:
             break
         @unknown default:
@@ -64,7 +67,7 @@ extension FloatingSheetDraggingBehaviour {
 
         let animator = UIViewPropertyAnimator(duration: FloatingSheetUpdater.animationDuration, curve: .easeOut)
         animator.addAnimations {
-            self.sheetView?.setCurrentState(nextState, animated: true)
+            self.sheetView?.setCurrentState(nextState, animated: false)
         }
         animator.startAnimation()
 
@@ -80,22 +83,32 @@ extension FloatingSheetDraggingBehaviour {
 
     private func updateTransition(gesture: Gesture) {
         guard let currentTransition = currentTransition else { return }
+        currentTransition.animator.pauseAnimation()
         let fractionComplete = currentTransition.progress(for: gesture)
         currentTransition.animator.fractionComplete = fractionComplete
-        print("Update transition fractionComplete: \(fractionComplete)")
     }
 
-    private func finishTransition(gesture: Gesture) {
+    private func finishTransition(gesture: Gesture, isCanceled: Bool) {
         guard let currentTransition = currentTransition else { return }
 
-        currentTransition.animator.addAnimations {
-            self.sheetView?.setCurrentState(currentTransition.finalState, animated: false)
+        let shouldReverseTransition: Bool
+        if isCanceled {
+            shouldReverseTransition = true
+        } else {
+            let closesState = closestState(for: gesture, in: currentTransition)
+            shouldReverseTransition = closesState == currentTransition.initialState
         }
 
+        currentTransition.animator.isReversed = shouldReverseTransition
+        currentTransition.animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         self.currentTransition = nil
     }
 
-    private func closestState(for gesture: Gesture, except excludingState: FloatingSheetState? = nil) -> FloatingSheetState? {
+    private func closestState(
+        for gesture: Gesture,
+        in transition: Transition? = nil,
+        except excludingState: FloatingSheetState? = nil
+    ) -> FloatingSheetState? {
         guard let context = sheetView?.currentContext() else { return nil }
 
         let gravitationPoints = states
@@ -104,8 +117,16 @@ extension FloatingSheetDraggingBehaviour {
                 let frame = state.position.frame(context)
                 let expectedCenter = anchorPoint(for: frame)
 
-                let distance = gesture.center.distance(to: expectedCenter)
+                let projectedCenter: CGPoint
+                if let transition = transition {
+                    projectedCenter = transition.projectedPosition(for: gesture)
+                } else {
+                    projectedCenter = gesture.projectedStopPoint()
+                }
+
+                let distance = projectedCenter.distance(to: expectedCenter)
                 let force = state.gravityCoefficient / (distance * distance + 1)
+
                 return GravitationPoint(
                     center: expectedCenter,
                     state: state,
@@ -117,6 +138,10 @@ extension FloatingSheetDraggingBehaviour {
         return strongestPoint?.state
     }
 
+    private func nextExpectedState(from currentState: FloatingSheetState, for gesture: Gesture) -> FloatingSheetState? {
+        return nil
+    }
+
     private func anchorPoint(for frame: CGRect) -> CGPoint {
         frame.origin
     }
@@ -124,8 +149,23 @@ extension FloatingSheetDraggingBehaviour {
 
 extension FloatingSheetDraggingBehaviour {
     private struct Gesture {
-        let center: CGPoint
-        
+        var center: CGPoint
+        var velocity: CGPoint
+
+        func projectedStopPoint() -> CGPoint {
+            let acceleration: CGFloat = -900
+            let accelerationVector = CGPoint(
+                x: acceleration * sign(velocity.x),
+                y: acceleration * sign(velocity.y)
+            )
+
+            let projectedPoint = CGPoint(
+                x: center.x - 0.5 * velocity.x * velocity.x / accelerationVector.x,
+                y: center.y - 0.5 * velocity.y * velocity.y / accelerationVector.y
+            )
+
+            return projectedPoint
+        }
     }
 
     private struct GravitationPoint {
@@ -142,9 +182,19 @@ extension FloatingSheetDraggingBehaviour {
         let finalState: FloatingSheetState
         let finalPosition: CGPoint
 
-        func progress(for gesture: Gesture) -> CGFloat {
+        func position(for gesture: Gesture) -> CGPoint {
             let gestureDelta = initialGesture.center - initialPosition
-            let gesturePosition = gesture.center - gestureDelta
+            let position = gesture.center - gestureDelta
+            return position
+        }
+
+        func projectedPosition(for gesture: Gesture) -> CGPoint {
+            let normalizedGesture = Gesture(center: position(for: gesture), velocity: gesture.velocity)
+            return normalizedGesture.projectedStopPoint()
+        }
+
+        func progress(for gesture: Gesture) -> CGFloat {
+            let gesturePosition = position(for: gesture)
             let progress = (gesturePosition.y - initialPosition.y) / (finalPosition.y - initialPosition.y)
             return progress
         }

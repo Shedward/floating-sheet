@@ -21,7 +21,7 @@ final class FloatingSheetView: UIView {
     private var states: [FloatingSheetState] = []
     private var draggingBehaviour: FloatingSheetDraggingBehaviour?
 
-    private var isLayoutedInitially: Bool = false
+    private var shouldUpdateAfterLayout: Bool = true
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,7 +39,11 @@ final class FloatingSheetView: UIView {
         addSubview(overlayView)
         overlayView.edgesToSuperview()
 
+        shadowView.backgroundColor = .white
+        floatingView.clipsToBounds = false
         floatingView.insertSubview(shadowView, belowSubview: contentContainer)
+
+
         maskingView.frame = contentContainer.bounds
         maskingView.backgroundColor = .white
         contentContainer.mask = maskingView
@@ -48,22 +52,14 @@ final class FloatingSheetView: UIView {
         contentContainer.edgesToSuperview()
 
         addSubview(floatingView)
-        updateState(animated: false)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        if !isLayoutedInitially {
+        if shouldUpdateAfterLayout {
+            shouldUpdateAfterLayout = false
             updateState(animated: false)
-            isLayoutedInitially = true
-        }
-
-        if let currentState = currentState {
-            let updater = createUpdater(to: currentState)
-            updater?.updateAnimated {
-                updater?.updateMask()
-            }
         }
     }
 
@@ -94,11 +90,13 @@ final class FloatingSheetView: UIView {
     private func updateState(animated: Bool) {
         guard let currentState = currentState else { return }
 
+        print("Update state to \(currentState.id), animated: \(animated)")
+
         let updater = createUpdater(to: currentState)
         updater?.updateState(animated: animated)
     }
 
-    func createUpdater(to state: FloatingSheetState) -> FloatingSheetUpdater? {
+    private func createUpdater(to state: FloatingSheetState) -> FloatingSheetUpdater? {
         guard let context = currentContext() else { return nil }
 
         let updater = FloatingSheetUpdater(sheetView: self, context: context, to: state)

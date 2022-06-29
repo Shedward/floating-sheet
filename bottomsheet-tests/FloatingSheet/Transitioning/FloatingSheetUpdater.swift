@@ -23,10 +23,10 @@ struct FloatingSheetUpdater {
     func updateState(animated: Bool) {
         updateAnimated(animated) {
             updatePosition()
+            sheetView.floatingView.layoutIfNeeded()
             updateOverlayAppearance()
             updateShadow()
             updateMask()
-            sheetView.floatingView.layoutIfNeeded()
         }
     }
 

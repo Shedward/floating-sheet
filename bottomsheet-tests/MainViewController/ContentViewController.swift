@@ -39,11 +39,9 @@ final class ContentViewController: UIViewController {
             opacity: 0.4
         )
 
-        minimalState.position = .relativeBottomHeight(0.25, extendBottom: true)
-            .inseted(.init(top: 16, left: 16, bottom: 16, right: 16))
-        minimalState.mask = .aroundView(stackView)
-            .inseted(.init(top: -4, left: -4, bottom: -4, right: -4))
-        minimalState.appearance.cornerRadius = 8
+        minimalState.position = .relativeBottomHeight(0.25, extendBottom: false)
+        minimalState.mask = .insets(.init(top: 50, left: 0, bottom: 0, right: 0))
+        minimalState.gravityCoefficient = 0.5
     }
 
     @IBAction
