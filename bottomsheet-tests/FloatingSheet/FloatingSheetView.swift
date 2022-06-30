@@ -16,7 +16,7 @@ final class FloatingSheetView: UIView {
     let contentContainer: UIView = UIView()
 
     private(set) var contentView: UIView?
-    private(set) var currentState: FloatingSheetState?
+    private(set) var currentState: FloatingSheetState = .default
 
     private var transitionBehaviour = FloatingSheetTransitionBehaviour()
     private let panGestureRecognizer = UIPanGestureRecognizer()
@@ -36,13 +36,12 @@ final class FloatingSheetView: UIView {
     private func commonInit() {
         backgroundColor = .clear
 
+        overlayView.frame = bounds
         addSubview(overlayView)
         overlayView.edgesToSuperview()
 
-        shadowView.backgroundColor = .white
         floatingView.clipsToBounds = false
         floatingView.insertSubview(shadowView, belowSubview: contentContainer)
-
 
         maskingView.frame = contentContainer.bounds
         maskingView.backgroundColor = .white
@@ -55,10 +54,13 @@ final class FloatingSheetView: UIView {
         floatingView.addGestureRecognizer(panGestureRecognizer)
 
         transitionBehaviour.view = self
+        updateUI(to: currentState)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
+        print("FloatingSheetView.layoutSubviews(), currentState = \(currentState.id)")
 
         if shouldUpdateAfterLayout {
             shouldUpdateAfterLayout = false
@@ -69,12 +71,7 @@ final class FloatingSheetView: UIView {
     func setContent(_ contentView: UIView) {
         self.contentView?.removeFromSuperview()
         self.contentView = contentView
-        contentView.autoresizingMask = []
         contentContainer.addSubview(contentView)
-        contentView.topToSuperview()
-        contentView.leadingToSuperview()
-        contentView.trailingToSuperview(priority: .init(rawValue: 999))
-        contentView.bottomToSuperview(prority: .init(rawValue: 999))
         updateUI(to: currentState)
     }
 
@@ -82,8 +79,8 @@ final class FloatingSheetView: UIView {
         transitionBehaviour.states = states
     }
 
-    func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
-        if animated, let currentState = currentState {
+    func setCurrentState(_ state: FloatingSheetState, animated: Bool, skipUpdate: Bool = false) {
+        if animated {
             transitionBehaviour.startTransition(from: currentState, to: state)
         } else {
             currentState = state

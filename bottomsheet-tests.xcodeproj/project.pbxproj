@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		630EBC9D286D977C00134EF5 /* FloatingSheetTransitionBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630EBC9C286D977C00134EF5 /* FloatingSheetTransitionBehaviour.swift */; };
 		630EBC9F286D98A000134EF5 /* Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630EBC9E286D98A000134EF5 /* Gesture.swift */; };
+		630EBCA8286E27B300134EF5 /* RevealServer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630EBCA1286E277800134EF5 /* RevealServer.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		630EBCA9286E27B300134EF5 /* RevealServer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 630EBCA1286E277800134EF5 /* RevealServer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63C78F582869C7FC001FF97E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F572869C7FC001FF97E /* AppDelegate.swift */; };
 		63C78F5A2869C7FC001FF97E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F592869C7FC001FF97E /* SceneDelegate.swift */; };
 		63C78F5C2869C7FC001FF97E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F5B2869C7FC001FF97E /* ViewController.swift */; };
@@ -31,9 +33,24 @@
 		63C78F8D286D12C6001FF97E /* InstantPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F8C286D12C6001FF97E /* InstantPanGestureRecognizer.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		630EBCAA286E27B300134EF5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				630EBCA9286E27B300134EF5 /* RevealServer.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		630EBC9C286D977C00134EF5 /* FloatingSheetTransitionBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatingSheetTransitionBehaviour.swift; sourceTree = "<group>"; };
 		630EBC9E286D98A000134EF5 /* Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gesture.swift; sourceTree = "<group>"; };
+		630EBCA1286E277800134EF5 /* RevealServer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RevealServer.xcframework; path = "../../Library/Application Support/Reveal/RevealServer/RevealServer.xcframework"; sourceTree = "<group>"; };
 		63C78F542869C7FC001FF97E /* bottomsheet-tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "bottomsheet-tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C78F572869C7FC001FF97E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63C78F592869C7FC001FF97E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,17 +80,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				630EBCA8286E27B300134EF5 /* RevealServer.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		630EBCA0286E277700134EF5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				630EBCA1286E277800134EF5 /* RevealServer.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		63C78F4B2869C7FC001FF97E = {
 			isa = PBXGroup;
 			children = (
 				63C78F562869C7FC001FF97E /* bottomsheet-tests */,
 				63C78F552869C7FC001FF97E /* Products */,
+				630EBCA0286E277700134EF5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -165,6 +192,8 @@
 				63C78F502869C7FC001FF97E /* Sources */,
 				63C78F512869C7FC001FF97E /* Frameworks */,
 				63C78F522869C7FC001FF97E /* Resources */,
+				630EBCAA286E27B300134EF5 /* Embed Frameworks */,
+				630EBCAB286E27F500134EF5 /* Reveal */,
 			);
 			buildRules = (
 			);
@@ -220,6 +249,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		630EBCAB286E27F500134EF5 /* Reveal */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Reveal;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export REVEAL_SERVER_FILENAME=\"RevealServer.xcframework\"\n\n# Update this path to point to the location of RevealServer.xcframework in your project.\nexport REVEAL_SERVER_PATH=\"${SRCROOT}/${REVEAL_SERVER_FILENAME}\"\n\n# If RevealServer.xcframework exists at the specified path, run the integration script.\nif [ -d \"${REVEAL_SERVER_PATH}\" ]; then\n \"${REVEAL_SERVER_PATH}/Scripts/integrate_revealserver.sh\"\nelse\n echo \"Reveal Server not loaded into ${TARGET_NAME}: ${REVEAL_SERVER_FILENAME} could not be found.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		63C78F502869C7FC001FF97E /* Sources */ = {

@@ -40,8 +40,14 @@ final class ContentViewController: UIViewController {
         )
 
         minimalState.position = .relativeBottomHeight(0.25, extendBottom: false)
-        minimalState.mask = .aroundView(stackView)
-            .inseted(.init(top: -4, left: -4, bottom: -4, right: -4))
+        minimalState.mask = .aboveView(stackView)
+            .inseted(.init(top: -4, left: 0, bottom: 0, right: 0))
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        print("ContentViewController.viewDidLayoutSubviews() frame = \(view.frame)")
     }
 
     @IBAction

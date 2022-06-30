@@ -92,7 +92,7 @@
                         <constraints>
                             <constraint firstItem="So5-ub-7d5" firstAttribute="top" secondItem="DEs-2P-iNB" secondAttribute="bottom" constant="16" id="9li-Bc-YWD"/>
                             <constraint firstAttribute="trailing" secondItem="DEs-2P-iNB" secondAttribute="trailing" id="YiH-XN-V9U"/>
-                            <constraint firstAttribute="trailing" secondItem="So5-ub-7d5" secondAttribute="trailing" constant="16" id="ZdC-Xr-cm5"/>
+                            <constraint firstAttribute="trailing" secondItem="So5-ub-7d5" secondAttribute="trailing" priority="999" constant="16" id="ZdC-Xr-cm5"/>
                             <constraint firstItem="DEs-2P-iNB" firstAttribute="leading" secondItem="7lq-8d-cxA" secondAttribute="leading" id="bMN-TW-4fd"/>
                             <constraint firstItem="So5-ub-7d5" firstAttribute="leading" secondItem="7lq-8d-cxA" secondAttribute="leading" constant="16" id="f2P-vb-wmI"/>
                             <constraint firstItem="DEs-2P-iNB" firstAttribute="top" secondItem="7lq-8d-cxA" secondAttribute="top" id="rhQ-Px-6wS"/>

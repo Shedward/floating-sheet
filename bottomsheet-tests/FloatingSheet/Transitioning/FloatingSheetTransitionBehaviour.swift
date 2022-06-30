@@ -10,7 +10,7 @@ import simd
 
 class FloatingSheetTransitionBehaviour: NSObject {
     private let animationDuration: TimeInterval = 0.25
-    private let timing = UISpringTimingParameters(damping: 1.0, response: 0.4)
+    private let timing = UISpringTimingParameters(damping: 0.9, response: 0.4)
 
     weak var view: FloatingSheetView?
 
@@ -39,6 +39,7 @@ extension FloatingSheetTransitionBehaviour {
         )
 
         animator.addAnimations { [weak self] in
+            print("FloatingSheetTransitionBehaviour.animation(to: \(nextState.id))")
             guard let self = self else { return }
             self.view?.updateUI(to: nextState)
         }
@@ -46,8 +47,10 @@ extension FloatingSheetTransitionBehaviour {
             guard let self = self else { return }
             switch position {
             case .end:
+                print("FloatingSheetTransitionBehaviour.completion(.end)")
                 self.view?.setCurrentState(nextState, animated: false)
             case .start:
+                print("FloatingSheetTransitionBehaviour.completion(.start)")
                 self.view?.setCurrentState(initialState, animated: false)
             case .current:
                 break
@@ -65,12 +68,15 @@ extension FloatingSheetTransitionBehaviour {
     func didPan(state: UIGestureRecognizer.State, gesture: Gesture) {
         switch state {
         case .began:
+            print("FloatingSheetTransitionBehaviour.didPan(state: .began)")
             startTransition(gesture: gesture)
         case .changed:
             updateTransition(gesture: gesture)
         case .ended:
+            print("FloatingSheetTransitionBehaviour.didPan(state: .ended)")
             finishTransition(gesture: gesture, isCanceled: false)
         case .cancelled, .failed:
+            print("FloatingSheetTransitionBehaviour.didPan(state: .canceled)")
             finishTransition(gesture: gesture, isCanceled: true)
         case .possible:
             break
@@ -100,7 +106,10 @@ extension FloatingSheetTransitionBehaviour {
                 finalPosition: position(for: nextState)
             )
         } else {
-            currentTransition?.animator.pauseAnimation()
+            if let currentTransition = currentTransition {
+                currentTransition.animator.pauseAnimation()
+                currentTransition.initialDelta = gesture.center - currentTransition.initialPosition
+            }
         }
     }
 
@@ -182,13 +191,29 @@ extension FloatingSheetTransitionBehaviour {
         let position: CGPoint
     }
 
-    private struct Transition {
-        let animator: UIViewPropertyAnimator
-        let initialDelta: CGPoint
+    private class Transition {
+        var animator: UIViewPropertyAnimator
+        var initialDelta: CGPoint
         let initialState: FloatingSheetState
         let initialPosition: CGPoint
         let finalState: FloatingSheetState
         let finalPosition: CGPoint
+
+        init(
+            animator: UIViewPropertyAnimator,
+            initialDelta: CGPoint,
+            initialState: FloatingSheetState,
+            initialPosition: CGPoint,
+            finalState: FloatingSheetState,
+            finalPosition: CGPoint
+        ) {
+            self.animator = animator
+            self.initialDelta = initialDelta
+            self.initialState = initialState
+            self.initialPosition = initialPosition
+            self.finalState = finalState
+            self.finalPosition = finalPosition
+        }
 
         func position(for gesture: Gesture) -> CGPoint {
             let gestureDelta = initialDelta

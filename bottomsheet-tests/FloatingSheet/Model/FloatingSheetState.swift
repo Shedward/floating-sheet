@@ -17,6 +17,8 @@ struct FloatingSheetState {
     init(id: String) {
         self.id = id
     }
+
+    static let `default` = FloatingSheetState(id: "default")
 }
 
 extension FloatingSheetState: Equatable, Hashable {

@@ -25,21 +25,29 @@ final class FloatingSheetViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func loadView() {
-        view = contentView
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.addSubview(contentView)
+        contentView.edgesToSuperview()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        viewSafeAreaInsetsDidChange()
     }
 
     private func setContentController(_ controller: ContentController) {
         controller.willMove(toParent: self)
         contentController.floatingSheetController = self
         contentView.setContent(controller.view)
+        controller.didMove(toParent: self)
 
         contentView.setStates(controller.floatingStates)
         if let initialState = controller.floatingStates.first {
             contentView.setCurrentState(initialState, animated: false)
         }
-
-        addChild(controller)
     }
 
     func setState(_ state: FloatingSheetState, animated: Bool) {

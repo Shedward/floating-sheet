@@ -28,6 +28,16 @@ struct FloatingSheetMask {
         }
     }
 
+    static func aboveView(_ view: UIView) -> FloatingSheetMask {
+        .init { context in
+            let minY = view.convert(view.bounds.origin, to: context.contentView).y
+            let maskCropedFromTop = context.contentView.bounds.inset(
+                by: .init(top: minY, left: 0, bottom: 0, right: 0)
+            )
+            return maskCropedFromTop
+        }
+    }
+
     func inseted(_ insets: UIEdgeInsets) -> FloatingSheetMask {
         .init { context in
             self.mask(context)?.inset(by: insets)

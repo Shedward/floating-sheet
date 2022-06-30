@@ -28,6 +28,7 @@ struct FloatingSheetUpdater {
     }
 
     func update() {
+        print("FloatingSheetUpdater.update(), state = \(state.id)")
         updatePosition()
         updateOverlayAppearance()
         updateShadow()
@@ -38,6 +39,7 @@ struct FloatingSheetUpdater {
         let newFrame = state.position.frame(context)
         sheetView.floatingView.frame = newFrame
         sheetView.contentContainer.frame = sheetView.floatingView.bounds
+        sheetView.contentView?.frame = sheetView.contentContainer.bounds
         sheetView.floatingView.layoutIfNeeded()
     }
 
