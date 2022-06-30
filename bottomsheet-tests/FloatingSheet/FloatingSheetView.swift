@@ -70,8 +70,11 @@ final class FloatingSheetView: UIView {
         self.contentView?.removeFromSuperview()
         self.contentView = contentView
         contentView.autoresizingMask = []
-        contentView.frame = contentContainer.bounds
         contentContainer.addSubview(contentView)
+        contentView.topToSuperview()
+        contentView.leadingToSuperview()
+        contentView.trailingToSuperview(priority: .init(rawValue: 999))
+        contentView.bottomToSuperview(prority: .init(rawValue: 999))
         updateUI(to: currentState)
     }
 
