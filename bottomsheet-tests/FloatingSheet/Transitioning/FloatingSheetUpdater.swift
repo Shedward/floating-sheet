@@ -8,46 +8,47 @@
 import UIKit
 
 struct FloatingSheetUpdater {
-    static let animationDuration: TimeInterval = 0.25
-
     private let sheetView: FloatingSheetView
     private let context: FloatingSheetContext
-    private let currentState: FloatingSheetState
+    private let state: FloatingSheetState
 
-    init(sheetView: FloatingSheetView, context: FloatingSheetContext, to currentState: FloatingSheetState) {
+    init?(sheetView: FloatingSheetView?, to currentState: FloatingSheetState?) {
+        guard
+            let currentState = currentState,
+            let sheetView = sheetView,
+            let context = sheetView.currentContext()
+        else {
+            return nil
+        }
+
+
         self.sheetView = sheetView
         self.context = context
-        self.currentState = currentState
+        self.state = currentState
     }
 
-    func updateState(animated: Bool) {
-        print("FloatingSheetUpdater.updateState(animated: \(animated)), state = \(currentState.id)")
-
-        updateAnimated(animated) {
-            updatePosition()
-            print("FloatingSheetUpdater.floatingView.layoutIfNeeded()")
-            sheetView.floatingView.layoutIfNeeded()
-            updateOverlayAppearance()
-            updateShadow()
-            updateMask()
-        }
+    func update() {
+        updatePosition()
+        sheetView.floatingView.layoutIfNeeded()
+        updateOverlayAppearance()
+        updateShadow()
+        updateMask()
     }
 
     func updatePosition() {
-        let newFrame = currentState.position.frame(context)
-        print("FloatingSheetUpdater.updatePosition frame = \(newFrame)")
+        let newFrame = state.position.frame(context)
         sheetView.floatingView.frame = newFrame
+        sheetView.contentContainer.frame = sheetView.floatingView.bounds
+        sheetView.contentView?.frame = sheetView.contentContainer.bounds
     }
 
     func updateOverlayAppearance() {
-        print("FloatingSheetUpdater.updateOverlayAppearance")
-        sheetView.overlayView.backgroundColor = currentState.appearance.overlayColor
+        sheetView.overlayView.backgroundColor = state.appearance.overlayColor
     }
 
     func updateMask() {
-        print("FloatingSheetUpdater.updateMask")
-        let frame = currentState.mask.mask(context) ?? sheetView.floatingView.bounds
-        let cornerRadius = currentState.appearance.cornerRadius
+        let frame = state.mask.mask(context) ?? sheetView.floatingView.bounds
+        let cornerRadius = state.appearance.cornerRadius
 
         sheetView.maskingView.layer.cornerRadius = cornerRadius
         sheetView.maskingView.frame = frame
@@ -57,24 +58,9 @@ struct FloatingSheetUpdater {
     }
 
     func updateShadow() {
-        print("FloatingSheetUpdater.updateShadow")
-        sheetView.shadowView.layer.shadowColor = currentState.appearance.shadow.color?.cgColor
-        sheetView.shadowView.layer.shadowOffset = currentState.appearance.shadow.offset
-        sheetView.shadowView.layer.shadowRadius = currentState.appearance.shadow.radius
-        sheetView.shadowView.layer.shadowOpacity = currentState.appearance.shadow.opacity
-    }
-
-    func updateAnimated(_ animated: Bool = true, _ actions: @escaping () -> Void) {
-        if animated {
-            UIView.animate(
-                withDuration: Self.animationDuration,
-                delay: 0,
-                options: [.curveEaseOut, .layoutSubviews]
-            ) {
-                actions()
-            }
-        } else {
-            actions()
-        }
+        sheetView.shadowView.layer.shadowColor = state.appearance.shadow.color?.cgColor
+        sheetView.shadowView.layer.shadowOffset = state.appearance.shadow.offset
+        sheetView.shadowView.layer.shadowRadius = state.appearance.shadow.radius
+        sheetView.shadowView.layer.shadowOpacity = state.appearance.shadow.opacity
     }
 }

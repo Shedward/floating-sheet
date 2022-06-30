@@ -1,5 +1,5 @@
 //
-//  FloatingSheetDraggingBehaviour.swift
+//  FloatingSheetTransitionBehaviour.swift
 //  bottomsheet-tests
 //
 //  Created by Vladislav Maltsev on 28.06.2022.
@@ -8,41 +8,61 @@
 import UIKit
 import simd
 
-class FloatingSheetDraggingBehaviour: NSObject {
-    private weak var sheetView: FloatingSheetView?
-    private let states: [FloatingSheetState]
+class FloatingSheetTransitionBehaviour: NSObject {
+    private let animationDuration: TimeInterval = 0.25
+    private let timing = UISpringTimingParameters(damping: 0.9, response: 0.5)
 
+    weak var view: FloatingSheetView?
+
+    var states: [FloatingSheetState] = []
     private var currentTransition: Transition?
+}
 
-    private lazy var panGestureRecognizer: UIPanGestureRecognizer = {
-        let recognizer = UIPanGestureRecognizer()
-        recognizer.addTarget(self, action: #selector(didPanFloatingSheet(recognizer:)))
-        return recognizer
-    }()
-
-    init(in sheetView: FloatingSheetView, states: [FloatingSheetState]) {
-        self.sheetView = sheetView
-        self.states = states
-        super.init()
-
-        sheetView.floatingView.addGestureRecognizer(panGestureRecognizer)
+extension FloatingSheetTransitionBehaviour {
+    func startTransition(
+        from initialState: FloatingSheetState,
+        to nextState: FloatingSheetState
+    ) {
+        currentTransition?.animator.stopAnimation(false)
+        let animator = transitionAnimator(from: initialState, to: nextState)
+        animator.startAnimation()
     }
 
-    deinit {
-        sheetView?.floatingView.removeGestureRecognizer(panGestureRecognizer)
+
+    private func transitionAnimator(
+        from initialState: FloatingSheetState,
+        to nextState: FloatingSheetState
+    ) -> UIViewPropertyAnimator {
+        let animator = UIViewPropertyAnimator(
+            duration: animationDuration,
+            timingParameters: timing
+        )
+        animator.addAnimations { [weak self] in
+            guard let self = self else { return }
+            self.view?.updateUI(to: nextState)
+        }
+        animator.addCompletion { [weak self] position in
+            guard let self = self else { return }
+            switch position {
+            case .end:
+                self.view?.setCurrentState(nextState, animated: false)
+            case .start:
+                self.view?.setCurrentState(initialState, animated: false)
+            case .current:
+                break
+            @unknown default:
+                break
+            }
+        }
+
+        return animator
     }
 }
 
-extension FloatingSheetDraggingBehaviour {
+extension FloatingSheetTransitionBehaviour {
 
-    @objc private func didPanFloatingSheet(recognizer: UIPanGestureRecognizer) {
-        guard let sheetView = sheetView else { return }
-
-        let position = recognizer.location(in: sheetView)
-        let velocity = recognizer.velocity(in: sheetView)
-        let gesture = Gesture(center: position, velocity: velocity)
-
-        switch recognizer.state {
+    func didPan(state: UIGestureRecognizer.State, gesture: Gesture) {
+        switch state {
         case .began:
             startTransition(gesture: gesture)
         case .changed:
@@ -59,42 +79,24 @@ extension FloatingSheetDraggingBehaviour {
     }
 
     private func startTransition(gesture: Gesture) {
-        guard currentTransition == nil else { return }
-        guard let currentState = sheetView?.currentState else { return }
-        guard let nextState = nextExpectedState(from: currentState, for: gesture) else { return }
+        if currentTransition == nil {
+            guard let initialState = view?.currentState else { return }
+            guard let nextState = nextExpectedState(from: initialState, for: gesture) else { return }
 
-        let timingProvider = UISpringTimingParameters(damping: 0.7, response: 0.4)
-        let animator = UIViewPropertyAnimator(duration: FloatingSheetUpdater.animationDuration, timingParameters: timingProvider)
-        animator.addAnimations { [weak sheetView] in
-            print("UIViewPropertyAnimator.animate(to: \(nextState.id))")
-            let updater = sheetView?.createUpdater(to: nextState)
-            updater?.updateState(animated: false)
-            sheetView?.layoutIfNeeded()
-        }
-        animator.addCompletion { [weak sheetView] position in
-            print("UIViewPropertyAnimator.completed(position: \(String(describing: position))")
-            switch position {
-            case .end:
-                sheetView?.setCurrentState(nextState, animated: false)
-            case .start:
-                let updater = sheetView?.createUpdater(to: currentState)
-                updater?.updateState(animated: false)
-            case .current:
-                break
-            @unknown default:
-                break
-            }
-        }
-        animator.pauseAnimation()
+            let animator = transitionAnimator(from: initialState, to: nextState)
+            animator.pauseAnimation()
 
-        currentTransition = .init(
-            animator: animator,
-            initialGesture: gesture,
-            initialState: currentState,
-            initialPosition: position(for: currentState),
-            finalState: nextState,
-            finalPosition: position(for: nextState)
-        )
+            currentTransition = .init(
+                animator: animator,
+                initialGesture: gesture,
+                initialState: initialState,
+                initialPosition: position(for: initialState),
+                finalState: nextState,
+                finalPosition: position(for: nextState)
+            )
+        } else {
+            currentTransition?.animator.pauseAnimation()
+        }
     }
 
     private func updateTransition(gesture: Gesture) {
@@ -122,7 +124,7 @@ extension FloatingSheetDraggingBehaviour {
 
 }
 
-extension FloatingSheetDraggingBehaviour {
+extension FloatingSheetTransitionBehaviour {
 
     private func nextExpectedState(from currentState: FloatingSheetState, for gesture: Gesture) -> FloatingSheetState? {
         let currentPosition = position(for: currentState)
@@ -159,7 +161,7 @@ extension FloatingSheetDraggingBehaviour {
     }
 
     private func position(for state: FloatingSheetState) -> CGPoint {
-        guard let context = sheetView?.currentContext() else { return .zero }
+        guard let context = view?.currentContext() else { return .zero }
         let frame = state.position.frame(context)
         return frame.origin
     }
@@ -169,30 +171,10 @@ extension FloatingSheetDraggingBehaviour {
     }
 }
 
-extension FloatingSheetDraggingBehaviour {
+extension FloatingSheetTransitionBehaviour {
     private struct PositionedState {
         let state: FloatingSheetState
         let position: CGPoint
-    }
-
-    private struct Gesture {
-        var center: CGPoint
-        var velocity: CGPoint
-
-        func projectedStopPoint() -> CGPoint {
-            let acceleration: CGFloat = -900
-            let accelerationVector = CGPoint(
-                x: acceleration * sign(velocity.x),
-                y: acceleration * sign(velocity.y)
-            )
-
-            let projectedPoint = CGPoint(
-                x: center.x - 0.5 * velocity.x * velocity.x / accelerationVector.x,
-                y: center.y - 0.5 * velocity.y * velocity.y / accelerationVector.y
-            )
-
-            return projectedPoint
-        }
     }
 
     private struct Transition {

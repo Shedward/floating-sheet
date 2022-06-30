@@ -13,13 +13,13 @@ final class FloatingSheetView: UIView {
     let floatingView: UIView = UIView()
     let maskingView: UIView = UIView()
     let shadowView: UIView = .init()
+    let contentContainer: UIView = UIView()
 
+    private(set) var contentView: UIView?
     private(set) var currentState: FloatingSheetState?
 
-    private var contentView: UIView?
-    private let contentContainer: UIView = UIView()
-    private var states: [FloatingSheetState] = []
-    private var draggingBehaviour: FloatingSheetDraggingBehaviour?
+    private var transitionBehaviour = FloatingSheetTransitionBehaviour()
+    private let panGestureRecognizer = UIPanGestureRecognizer()
 
     var shouldUpdateAfterLayout: Bool = true
 
@@ -48,65 +48,52 @@ final class FloatingSheetView: UIView {
         maskingView.backgroundColor = .white
         contentContainer.mask = maskingView
 
-        contentContainer.translatesAutoresizingMaskIntoConstraints = false
         floatingView.addSubview(contentContainer)
-        contentContainer.edgesToSuperview()
 
         addSubview(floatingView)
+        panGestureRecognizer.addTarget(self, action: #selector(didPanFloatingView(recognizer:)))
+        floatingView.addGestureRecognizer(panGestureRecognizer)
+
+        transitionBehaviour.view = self
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("FloatingSheetView.layoutSubviews() shouldUpdateAfterLayout = \(shouldUpdateAfterLayout)")
 
         if shouldUpdateAfterLayout {
             shouldUpdateAfterLayout = false
-            updateState(animated: false)
+            updateUI(to: currentState)
         }
     }
 
     func setContent(_ contentView: UIView) {
         self.contentView?.removeFromSuperview()
         self.contentView = contentView
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.autoresizingMask = []
+        contentView.frame = contentContainer.bounds
         contentContainer.addSubview(contentView)
-        contentView.leadingToSuperview()
-        contentView.topToSuperview()
-        contentView.trailingToSuperview(priority: .init(rawValue: 999))
-        contentView.bottomToSuperview(prority: .init(rawValue: 999))
-        updateState(animated: false)
+        updateUI(to: currentState)
     }
 
     func setStates(_ states: [FloatingSheetState]) {
-        self.states = states
-
-        draggingBehaviour = FloatingSheetDraggingBehaviour(in: self, states: states)
+        transitionBehaviour.states = states
     }
 
     func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
-        guard state.id != currentState?.id else { return }
-        print("FloatingSheetView.setCurrentState(\(state.id), animated: \(animated))")
-        currentState = state
-        updateState(animated: animated)
+        if animated, let currentState = currentState {
+            transitionBehaviour.startTransition(from: currentState, to: state)
+        } else {
+            currentState = state
+            updateUI(to: state)
+        }
     }
 
-    private func updateState(animated: Bool) {
-        print("FloatingSheetView.updateState(animated: \(animated))")
-        guard let currentState = currentState else { return }
-
-        let updater = createUpdater(to: currentState)
-        updater?.updateState(animated: animated)
-    }
-
-    func createUpdater(to state: FloatingSheetState) -> FloatingSheetUpdater? {
-        guard let context = currentContext() else { return nil }
-
-        let updater = FloatingSheetUpdater(sheetView: self, context: context, to: state)
-        return updater
+    func updateUI(to state: FloatingSheetState?) {
+        let updater = FloatingSheetUpdater(sheetView: self, to: state)
+        updater?.update()
     }
 
     func currentContext() -> FloatingSheetContext? {
-        print("FloatingSheetView.currentContext()")
         guard let contentView = contentView else {
             return nil
         }
@@ -117,5 +104,13 @@ final class FloatingSheetView: UIView {
         )
 
         return context
+    }
+
+    @objc private func didPanFloatingView(recognizer: UIPanGestureRecognizer) {
+        let position = recognizer.location(in: self)
+        let velocity = recognizer.velocity(in: self)
+        let gesture = Gesture(center: position, velocity: velocity)
+
+        transitionBehaviour.didPan(state: recognizer.state, gesture: gesture)
     }
 }
