@@ -10,7 +10,7 @@ import simd
 
 class FloatingSheetTransitionBehaviour: NSObject {
     private let animationDuration: TimeInterval = 0.25
-    private let timing = UISpringTimingParameters(damping: 0.9, response: 0.5)
+    private let timing = UISpringTimingParameters(damping: 1.0, response: 0.4)
 
     weak var view: FloatingSheetView?
 
@@ -37,6 +37,7 @@ extension FloatingSheetTransitionBehaviour {
             duration: animationDuration,
             timingParameters: timing
         )
+
         animator.addAnimations { [weak self] in
             guard let self = self else { return }
             self.view?.updateUI(to: nextState)

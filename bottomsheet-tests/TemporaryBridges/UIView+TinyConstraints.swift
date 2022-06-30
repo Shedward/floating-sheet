@@ -55,7 +55,7 @@ extension UIView {
 
     func bottomToSuperview(prority: UILayoutPriority = .required) {
         guard let superview = superview else { return }
-        bottom(to: superview)
+        bottom(to: superview, priority: prority)
     }
 
     func bottom(to view: UIView, priority: UILayoutPriority = .required) {
