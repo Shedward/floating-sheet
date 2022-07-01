@@ -16,7 +16,7 @@ final class FloatingSheetView: UIView {
     let contentContainer: UIView = UIView()
 
     private(set) var contentView: UIView?
-    private(set) var currentState: FloatingSheetState = .default
+    var currentState: FloatingSheetState = .default
 
     private var transitionBehaviour = FloatingSheetTransitionBehaviour()
     private let panGestureRecognizer = UIPanGestureRecognizer()
@@ -79,7 +79,7 @@ final class FloatingSheetView: UIView {
         transitionBehaviour.states = states
     }
 
-    func setCurrentState(_ state: FloatingSheetState, animated: Bool, skipUpdate: Bool = false) {
+    func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
         if animated {
             transitionBehaviour.startTransition(from: currentState, to: state)
         } else {

@@ -10,7 +10,7 @@ import simd
 
 class FloatingSheetTransitionBehaviour: NSObject {
     private let animationDuration: TimeInterval = 0.25
-    private let timing = UISpringTimingParameters(damping: 0.9, response: 0.4)
+    private let timing = UISpringTimingParameters(damping: 0.8, response: 0.4)
 
     weak var view: FloatingSheetView?
 
@@ -48,17 +48,10 @@ extension FloatingSheetTransitionBehaviour {
             switch position {
             case .end:
                 print("FloatingSheetTransitionBehaviour.completion(.end)")
-                self.view?.setCurrentState(nextState, animated: false)
+                self.view?.currentState = nextState
             case .start:
                 print("FloatingSheetTransitionBehaviour.completion(.start)")
-                DispatchQueue.main.async {
-                    // There is a problem with layout - if we update it right after
-                    // animation complete it does not take into account safeArea
-                    // (for some reason only for reversed animation).
-                    // To allow autolayout to correctly use updated safe areas
-                    // we postpone update to next render cycle
-                    self.view?.setCurrentState(initialState, animated: false)
-                }
+                self.view?.currentState = initialState
             case .current:
                 break
             @unknown default:
