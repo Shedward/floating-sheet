@@ -51,7 +51,14 @@ extension FloatingSheetTransitionBehaviour {
                 self.view?.setCurrentState(nextState, animated: false)
             case .start:
                 print("FloatingSheetTransitionBehaviour.completion(.start)")
-                self.view?.setCurrentState(initialState, animated: false)
+                DispatchQueue.main.async {
+                    // There is a problem with layout - if we update it right after
+                    // animation complete it does not take into account safeArea
+                    // (for some reason only for reversed animation).
+                    // To allow autolayout to correctly use updated safe areas
+                    // we postpone update to next render cycle
+                    self.view?.setCurrentState(initialState, animated: false)
+                }
             case .current:
                 break
             @unknown default:
