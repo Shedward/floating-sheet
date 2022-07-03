@@ -19,9 +19,17 @@ final class FloatingSheetView: UIView {
     var currentState: FloatingSheetState = .default
 
     private var transitionBehaviour = FloatingSheetTransitionBehaviour()
-    private let panGestureRecognizer = UIPanGestureRecognizer()
+    private let panGestureRecognizer = InstantPanGestureRecognizer()
 
     var shouldUpdateAfterLayout: Bool = true
+    var shouldInterceptTap: Bool {
+        get {
+            panGestureRecognizer.shouldInterceptTap
+        }
+        set {
+            panGestureRecognizer.shouldInterceptTap = newValue
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -59,8 +67,6 @@ final class FloatingSheetView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        print("FloatingSheetView.layoutSubviews(), currentState = \(currentState.id)")
 
         if shouldUpdateAfterLayout {
             shouldUpdateAfterLayout = false
@@ -107,9 +113,9 @@ final class FloatingSheetView: UIView {
     }
 
     @objc private func didPanFloatingView(recognizer: UIPanGestureRecognizer) {
-        let position = recognizer.location(in: self)
+        let translation = recognizer.translation(in: self)
         let velocity = recognizer.velocity(in: self)
-        let gesture = Gesture(center: position, velocity: velocity)
+        let gesture = Gesture(translation: translation, velocity: velocity)
 
         transitionBehaviour.didPan(state: recognizer.state, gesture: gesture)
     }

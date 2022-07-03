@@ -38,6 +38,20 @@ func - (_ lhs: CGPoint, _ rhs: CGPoint) -> CGPoint {
     )
 }
 
+func * (_ fraction: CGFloat, _ point: CGPoint) -> CGPoint {
+    .init(
+        x: fraction * point.x,
+        y: fraction * point.y
+    )
+}
+
+func * (_ point: CGPoint, _ fraction: CGFloat) -> CGPoint {
+    .init(
+        x: fraction * point.x,
+        y: fraction * point.y
+    )
+}
+
 extension UISpringTimingParameters {
     convenience init(damping: CGFloat, response: CGFloat, initialVelocity: CGVector = .zero) {
         let stiffness = pow(2 * .pi / response, 2)

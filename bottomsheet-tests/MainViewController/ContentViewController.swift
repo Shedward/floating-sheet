@@ -46,8 +46,6 @@ final class ContentViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        print("ContentViewController.viewDidLayoutSubviews() frame = \(view.frame)")
     }
 
     @IBAction
@@ -68,6 +66,6 @@ final class ContentViewController: UIViewController {
 
 extension ContentViewController: FloatingSheetPresentable {
     var floatingStates: [FloatingSheetState] {
-        [minimalState, fullState]
+        [minimalState, mediumState,  fullState]
     }
 }

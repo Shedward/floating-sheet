@@ -9,10 +9,11 @@ import UIKit
 import simd
 
 struct Gesture {
-    var center: CGPoint
+    var translation: CGPoint
     var velocity: CGPoint
 
-    func projectedStopPoint() -> CGPoint {
+    func projectedStopPoint(for initialPoint: CGPoint) -> CGPoint {
+        let position = initialPoint + translation
         let acceleration: CGFloat = -900
         let accelerationVector = CGPoint(
             x: acceleration * sign(velocity.x),
@@ -20,8 +21,8 @@ struct Gesture {
         )
 
         let projectedPoint = CGPoint(
-            x: center.x - 0.5 * velocity.x * velocity.x / accelerationVector.x,
-            y: center.y - 0.5 * velocity.y * velocity.y / accelerationVector.y
+            x: position.x - 0.5 * velocity.x * velocity.x / accelerationVector.x,
+            y: position.y - 0.5 * velocity.y * velocity.y / accelerationVector.y
         )
 
         return projectedPoint
