@@ -85,7 +85,6 @@ extension FloatingSheetTransitionBehaviour {
         )
 
         self.currentTransition = currentTransition
-
         return currentTransition
     }
 }
@@ -154,7 +153,7 @@ extension FloatingSheetTransitionBehaviour {
         currentTransition.animator.isReversed = shouldReverseTransition
 
         let remainedTranslation = currentTransition.currentTranslation()
-        if remainedTranslation.y <= 0 {
+        if remainedTranslation.y == 0 {
             currentTransition.animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         } else {
             let relativeVelocity = min(abs(gesture.velocity.y), 30)
