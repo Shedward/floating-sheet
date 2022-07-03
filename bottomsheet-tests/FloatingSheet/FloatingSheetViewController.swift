@@ -32,12 +32,6 @@ final class FloatingSheetViewController: UIViewController {
         contentView.edgesToSuperview()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        viewSafeAreaInsetsDidChange()
-    }
-
     private func setContentController(_ controller: ContentController) {
         controller.willMove(toParent: self)
         contentController.floatingSheetController = self
