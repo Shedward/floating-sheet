@@ -9,13 +9,18 @@ import UIKit
 import simd
 
 class FloatingSheetTransitionBehaviour: NSObject {
-    private let animationDuration: TimeInterval = 0.25
-    private let timing = UISpringTimingParameters(damping: 1.0, response: 0.4)
 
     weak var view: FloatingSheetView?
 
     var states: [FloatingSheetState] = []
     private var currentTransition: Transition?
+
+    private let animationDuration: TimeInterval = 0.25
+    private let timing = UISpringTimingParameters(damping: 1.0, response: 0.35)
+
+    private func momentumTiming(for initialVelocity: CGVector) -> UISpringTimingParameters {
+        UISpringTimingParameters(damping: 0.95, response: 0.35, initialVelocity: initialVelocity)
+    }
 }
 
 extension FloatingSheetTransitionBehaviour {
@@ -147,7 +152,20 @@ extension FloatingSheetTransitionBehaviour {
         }
 
         currentTransition.animator.isReversed = shouldReverseTransition
-        currentTransition.animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
+
+        let remainedTranslation = currentTransition.currentTranslation()
+        if remainedTranslation.y <= 0 {
+            currentTransition.animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
+        } else {
+            let relativeVelocity = min(abs(gesture.velocity.y), 30)
+            let timingParameters = momentumTiming(for: .init(dx: relativeVelocity, dy: relativeVelocity))
+            let preferredDuration = UIViewPropertyAnimator(duration: 0, timingParameters: timingParameters).duration
+            let durationFactor = CGFloat(preferredDuration / currentTransition.animator.duration)
+            currentTransition.animator.continueAnimation(
+                withTimingParameters: timingParameters,
+                durationFactor: durationFactor
+            )
+        }
     }
 
 }
@@ -235,6 +253,10 @@ extension FloatingSheetTransitionBehaviour {
 
         func currentTranslation() -> CGPoint {
             (finalPosition - initialPosition) * animator.fractionComplete
+        }
+
+        func remainedTranslation() -> CGPoint {
+            (finalPosition - initialPosition) - currentTranslation()
         }
 
         func projectedPosition(for gesture: Gesture) -> CGPoint {
