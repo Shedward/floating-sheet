@@ -10,7 +10,7 @@ import simd
 
 class FloatingSheetTransitionBehaviour: NSObject {
     private let animationDuration: TimeInterval = 0.25
-    private let timing = UISpringTimingParameters(damping: 0.8, response: 0.4)
+    private let timing = UISpringTimingParameters(damping: 1.0, response: 0.4)
 
     weak var view: FloatingSheetView?
 
@@ -19,19 +19,28 @@ class FloatingSheetTransitionBehaviour: NSObject {
 }
 
 extension FloatingSheetTransitionBehaviour {
-    func startTransition(
-        from initialState: FloatingSheetState,
-        to nextState: FloatingSheetState
-    ) {
-        currentTransition?.animator.stopAnimation(false)
-        let animator = transitionAnimator(from: initialState, to: nextState)
-        animator.startAnimation()
+    func setStateAnimated(to nextState: FloatingSheetState) {
+        if let currentTransition = currentTransition {
+            let previousTranslation = currentTransition.currentTranslation()
+            currentTransition.animator.stopAnimation(true)
+
+            if let newTransition = createNewTransition(to: nextState) {
+                let newProgress = newTransition.progress(
+                    for: .init(translation: previousTranslation, velocity: .zero)
+                )
+                newTransition.animator.fractionComplete = newProgress
+                newTransition.animator.startAnimation()
+            }
+
+        } else {
+            let newTransition = createNewTransition(to: nextState)
+            newTransition?.animator.startAnimation()
+        }
     }
 
-    private func transitionAnimator(
-        from initialState: FloatingSheetState,
-        to nextState: FloatingSheetState
-    ) -> UIViewPropertyAnimator {
+    private func createNewTransition(to nextState: FloatingSheetState) -> Transition? {
+        guard let initialState = view?.currentState else { return nil }
+
         let animator = UIViewPropertyAnimator(
             duration: animationDuration,
             timingParameters: timing
@@ -60,7 +69,19 @@ extension FloatingSheetTransitionBehaviour {
             self.currentTransition = nil
         }
 
-        return animator
+        let initialPosition = position(for: initialState)
+
+        let currentTransition = Transition(
+            animator: animator,
+            initialState: initialState,
+            initialPosition: initialPosition,
+            finalState: nextState,
+            finalPosition: position(for: nextState)
+        )
+
+        self.currentTransition = currentTransition
+
+        return currentTransition
     }
 }
 
@@ -70,16 +91,16 @@ extension FloatingSheetTransitionBehaviour {
         switch state {
         case .began:
             print("FloatingSheetTransitionBehaviour.didPan(state: .began)")
-            startTransition(gesture: gesture)
+            startInteractiveTransition(gesture: gesture)
         case .changed:
             print("FloatingSheetTransitionBehaviour.didPan(state: .changed)")
-            updateTransition(gesture: gesture)
+            updateInteractiveTransition(gesture: gesture)
         case .ended:
             print("FloatingSheetTransitionBehaviour.didPan(state: .ended)")
-            finishTransition(gesture: gesture, isCanceled: false)
+            finishInteractiveTransition(gesture: gesture, isCanceled: false)
         case .cancelled, .failed:
             print("FloatingSheetTransitionBehaviour.didPan(state: .canceled)")
-            finishTransition(gesture: gesture, isCanceled: true)
+            finishInteractiveTransition(gesture: gesture, isCanceled: true)
         case .possible:
             break
         @unknown default:
@@ -87,38 +108,30 @@ extension FloatingSheetTransitionBehaviour {
         }
     }
 
-    private func startTransition(gesture: Gesture) {
+    private func startInteractiveTransition(gesture: Gesture) {
         if let currentTransition = currentTransition {
             currentTransition.animator.pauseAnimation()
             currentTransition.animator.isReversed = false
-            currentTransition.initialTransition = currentTransition.transition(for: currentTransition.animator.fractionComplete)
+            currentTransition.initialTranslation = currentTransition.currentTranslation()
         } else {
-            guard let initialState = view?.currentState else { return }
-            guard let nextState = nextExpectedState(from: initialState, for: gesture) else { return }
+            guard
+                let view = view,
+                let nextState = nextExpectedState(from: view.currentState, for: gesture)
+            else { return }
 
-            let animator = transitionAnimator(from: initialState, to: nextState)
-            animator.startAnimation()
-            animator.pauseAnimation()
-
-            let initialPosition = position(for: initialState)
-            currentTransition = .init(
-                animator: animator,
-                initialState: initialState,
-                initialPosition: initialPosition,
-                finalState: nextState,
-                finalPosition: position(for: nextState)
-            )
+            let newTransition = createNewTransition(to: nextState)
+            newTransition?.animator.pauseAnimation()
         }
     }
 
-    private func updateTransition(gesture: Gesture) {
+    private func updateInteractiveTransition(gesture: Gesture) {
         guard let currentTransition = currentTransition else { return }
 
         let fractionComplete = currentTransition.progress(for: gesture)
         currentTransition.animator.fractionComplete = fractionComplete
     }
 
-    private func finishTransition(gesture: Gesture, isCanceled: Bool) {
+    private func finishInteractiveTransition(gesture: Gesture, isCanceled: Bool) {
         guard let currentTransition = currentTransition else { return }
 
         let shouldReverseTransition: Bool
@@ -126,7 +139,10 @@ extension FloatingSheetTransitionBehaviour {
             shouldReverseTransition = true
         } else {
             let projectedFinalPosition = currentTransition.projectedPosition(for: gesture)
-            let closesState = closestState(to: projectedFinalPosition)
+            let closesState = closestState(
+                of: [currentTransition.initialState, currentTransition.finalState],
+                to: projectedFinalPosition
+            )
             shouldReverseTransition = closesState == currentTransition.initialState
         }
 
@@ -141,7 +157,8 @@ extension FloatingSheetTransitionBehaviour {
     private func nextExpectedState(from currentState: FloatingSheetState, for gesture: Gesture) -> FloatingSheetState? {
         let currentPosition = position(for: currentState)
 
-        let possibleStatesOrderedByY = positionedStates()
+        let possibleStates = states.filter { $0 != currentState }
+        let possibleStatesOrderedByY = positionedStates(states: possibleStates)
             .filter { $0.state != currentState }
             .sorted { $0.position.y < $1.position.y }
 
@@ -161,11 +178,11 @@ extension FloatingSheetTransitionBehaviour {
         return nextState
     }
 
-    private func closestState(to position: CGPoint) -> FloatingSheetState? {
+    private func closestState(of states: [FloatingSheetState], to position: CGPoint) -> FloatingSheetState? {
         let yDistanceTo = { (positionedState: PositionedState) -> CGFloat in
             abs(positionedState.position.y - position.y)
         }
-        let closestState = positionedStates()
+        let closestState = positionedStates(states: states)
             .min { yDistanceTo($0) < yDistanceTo($1) }
             .map { $0.state }
 
@@ -178,7 +195,7 @@ extension FloatingSheetTransitionBehaviour {
         return frame.origin
     }
 
-    private func positionedStates() -> [PositionedState] {
+    private func positionedStates(states: [FloatingSheetState]) -> [PositionedState] {
         states.map { PositionedState(state: $0, position: position(for: $0)) }
     }
 }
@@ -191,7 +208,7 @@ extension FloatingSheetTransitionBehaviour {
 
     private class Transition {
         let animator: UIViewPropertyAnimator
-        var initialTransition: CGPoint = .zero
+        var initialTranslation: CGPoint = .zero
         let initialState: FloatingSheetState
         let initialPosition: CGPoint
         let finalState: FloatingSheetState
@@ -213,11 +230,11 @@ extension FloatingSheetTransitionBehaviour {
         }
 
         func position(for gesture: Gesture) -> CGPoint {
-            initialPosition + initialTransition + gesture.translation
+            initialPosition + initialTranslation + gesture.translation
         }
 
-        func transition(for progress: CGFloat) -> CGPoint {
-            (finalPosition - initialPosition) * progress
+        func currentTranslation() -> CGPoint {
+            (finalPosition - initialPosition) * animator.fractionComplete
         }
 
         func projectedPosition(for gesture: Gesture) -> CGPoint {

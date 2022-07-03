@@ -87,7 +87,7 @@ final class FloatingSheetView: UIView {
 
     func setCurrentState(_ state: FloatingSheetState, animated: Bool) {
         if animated {
-            transitionBehaviour.startTransition(from: currentState, to: state)
+            transitionBehaviour.setStateAnimated(to: state)
         } else {
             currentState = state
             updateUI(to: state)

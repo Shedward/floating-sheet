@@ -66,6 +66,6 @@ final class ContentViewController: UIViewController {
 
 extension ContentViewController: FloatingSheetPresentable {
     var floatingStates: [FloatingSheetState] {
-        [minimalState, mediumState,  fullState]
+        [minimalState,  fullState]
     }
 }
