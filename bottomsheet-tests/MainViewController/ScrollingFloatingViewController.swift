@@ -24,7 +24,8 @@ final class ScrollingFloatingViewController: UIViewController {
     
 
     override func viewDidLoad() {
-        scrollView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
+        scrollView.contentInset = .init(top: 16, left: 0, bottom: 16, right: 0)
+        scrollView.showsVerticalScrollIndicator = false
 
         minimalState.position = .aboveBottomEdge(relativeHeight: 0.25)
         maximalState.position = .full()

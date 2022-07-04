@@ -158,7 +158,7 @@ extension FloatingSheetTransitionBehaviour {
             currentTransition.animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         } else {
             let relativeVelocity = min(abs(gesture.velocity.y), 30)
-            let timingParameters = momentumTiming(for: .init(dx: relativeVelocity, dy: relativeVelocity))
+            let timingParameters = momentumTiming(for: .init(dx: 0, dy: relativeVelocity))
             let preferredDuration = UIViewPropertyAnimator(duration: 0, timingParameters: timingParameters).duration
             let durationFactor = CGFloat(preferredDuration / currentTransition.animator.duration)
             currentTransition.animator.continueAnimation(

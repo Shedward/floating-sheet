@@ -63,9 +63,17 @@ extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
         let scrollingGesture = view.gesture(for: scrollView.panGestureRecognizer)
         transitionBehaviour.didPan(state: .changed, gesture: scrollingGesture)
 
-        scrollView.setContentOffset(.init(x: 0, y: -scrollView.adjustedContentInset.top), animated: false)
+        var offset = scrollView.contentOffset
+        offset.y = -scrollView.adjustedContentInset.top
+        scrollView.setContentOffset(offset, animated: false)
 
         lastTransitionGesture = scrollingGesture
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if isTransitioning {
+            targetContentOffset.pointee = scrollView.contentOffset
+        }
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -77,10 +85,18 @@ extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
     }
 
     private func shouldTransitioningInsteadOfScrolling(for gesture: Gesture) -> Bool {
-        guard let transitionBehaviour = transitionBehaviour else { return false }
+        guard
+            let scrollView = floatingScrollView,
+            let transitionBehaviour = transitionBehaviour
+        else { return false }
 
         if transitionBehaviour.isTransitioning {
             return true
+        }
+
+        if scrollView.contentOffset.y > -scrollView.adjustedContentInset.top {
+            // If content is already scrolled we allow user to scroll back
+            return false
         }
 
         return transitionBehaviour.haveTransition(for: gesture)
