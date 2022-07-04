@@ -10,4 +10,5 @@ import UIKit
 struct FloatingSheetInteractions {
     var enableOverlayTap: Bool = true
     var transparentToUserInteraction: Bool = false
+    var enableScrolling: Bool = true
 }

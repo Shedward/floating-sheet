@@ -28,6 +28,8 @@ final class ScrollingFloatingViewController: UIViewController {
         scrollView.showsVerticalScrollIndicator = false
 
         minimalState.position = .aboveBottomEdge(relativeHeight: 0.25)
+        minimalState.interaction.enableScrolling = false
+
         maximalState.position = .full()
     }
 }

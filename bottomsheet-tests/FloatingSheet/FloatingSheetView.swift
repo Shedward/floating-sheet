@@ -16,7 +16,11 @@ final class FloatingSheetView: UIView {
     let contentContainer: UIView = UIView()
 
     private(set) var contentView: UIView?
-    var currentState: FloatingSheetState = .default
+    var currentState: FloatingSheetState = .default {
+        didSet {
+            updateScrolling()
+        }
+    }
 
     private let panGestureRecognizer = InstantPanGestureRecognizer()
     private var transitionBehaviour = FloatingSheetTransitionBehaviour()
@@ -63,6 +67,8 @@ final class FloatingSheetView: UIView {
         floatingView.addGestureRecognizer(panGestureRecognizer)
 
         transitionBehaviour.view = self
+        transitionBehaviour.scrollingBehaviour = scrollBehaviour
+
         scrollBehaviour.view = self
         scrollBehaviour.transitionBehaviour = transitionBehaviour
 
@@ -130,5 +136,9 @@ final class FloatingSheetView: UIView {
     @objc private func didPanFloatingView(recognizer: UIPanGestureRecognizer) {
         let gesture = self.gesture(for: recognizer)
         transitionBehaviour.didPan(state: recognizer.state, gesture: gesture)
+    }
+
+    private func updateScrolling() {
+        scrollBehaviour.setScrollingEnabled(currentState.interaction.enableScrolling)
     }
 }

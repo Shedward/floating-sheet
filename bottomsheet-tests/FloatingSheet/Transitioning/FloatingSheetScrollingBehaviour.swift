@@ -12,14 +12,11 @@ final class FloatingSheetScrollingBehaviour: NSObject {
     weak var transitionBehaviour: FloatingSheetTransitionBehaviour?
     weak var view: FloatingSheetView?
 
-    private(set) var isTransitioning: Bool = false
+    private(set) var isTransitioningInsteadScrolling: Bool = false
 
     private weak var floatingScrollView: UIScrollView?
     private var floatingScrollViewDelegate = UIScrollViewMultiDelegate()
-    private var lastTransitionGesture: Gesture?
-}
-
-extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
+    private var lastScrollingGesture: Gesture?
 
     func setFloatingScrollView(_ scrollView: UIScrollView?) {
         if
@@ -37,51 +34,44 @@ extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
         }
     }
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        guard
-            let view = view,
-            let transitionBehaviour = transitionBehaviour
-        else {
-            return
-        }
+    func setScrollingEnabled(_ isScrollingEnabled: Bool) {
+        floatingScrollView?.isScrollEnabled = isScrollingEnabled
+    }
+}
 
-        let scrollingGesture = view.gesture(for: scrollView.panGestureRecognizer)
-        isTransitioning = shouldTransitioningInsteadOfScrolling(for: scrollingGesture)
+// MARK: - Transitioning
+extension FloatingSheetScrollingBehaviour {
 
-        if isTransitioning {
-            transitionBehaviour.didPan(state: .began, gesture: scrollingGesture)
-        }
+    private func startTransitionInsteadScrollingIfNeeded(gesture: Gesture) {
+        guard shouldTransitioningInsteadOfScrolling(for: gesture) else { return }
+
+        isTransitioningInsteadScrolling = true
+        transitionBehaviour?.didPan(state: .began, gesture: gesture)
+        print("FloatingSheetScrollingBehaviour.startTransitionInsteadScrolling")
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard
-            isTransitioning,
-            let view = view,
-            let transitionBehaviour = transitionBehaviour
-        else { return }
+    private func continueTransitionInsteadScrolling(gesture: Gesture, preventScrolling: Bool) {
+        guard isTransitioningInsteadScrolling else { return }
+        guard let scrollView = floatingScrollView else { return }
 
-        let scrollingGesture = view.gesture(for: scrollView.panGestureRecognizer)
-        transitionBehaviour.didPan(state: .changed, gesture: scrollingGesture)
+        transitionBehaviour?.didPan(state: .changed, gesture: gesture)
 
-        var offset = scrollView.contentOffset
-        offset.y = -scrollView.adjustedContentInset.top
-        scrollView.setContentOffset(offset, animated: false)
+        if preventScrolling {
+            var offset = scrollView.contentOffset
+            offset.y = -scrollView.adjustedContentInset.top
+            scrollView.setContentOffset(offset, animated: false)
+        }
 
-        lastTransitionGesture = scrollingGesture
+        print("FloatingSheetScrollingBehaviour.continueTransitionInsteadScrolling")
     }
 
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if isTransitioning {
-            targetContentOffset.pointee = scrollView.contentOffset
+    private func finishTransitionInsteadScrolling() {
+        guard isTransitioningInsteadScrolling else { return }
+        if let lastScrollingGesture = lastScrollingGesture {
+            transitionBehaviour?.didPan(state: .ended, gesture: lastScrollingGesture)
         }
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if let lastTransitionGesture = lastTransitionGesture {
-            transitionBehaviour?.didPan(state: .ended, gesture: lastTransitionGesture)
-            self.lastTransitionGesture = nil
-        }
-        isTransitioning = false
+        isTransitioningInsteadScrolling = false
+        lastScrollingGesture = nil
     }
 
     private func shouldTransitioningInsteadOfScrolling(for gesture: Gesture) -> Bool {
@@ -100,5 +90,42 @@ extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
         }
 
         return transitionBehaviour.haveTransition(for: gesture)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension FloatingSheetScrollingBehaviour: UIScrollViewDelegate {
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        guard let view = view else { return }
+
+        let scrollingGesture = view.gesture(for: scrollView.panGestureRecognizer)
+        startTransitionInsteadScrollingIfNeeded(gesture: scrollingGesture)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let view = view else { return }
+
+        let scrollingGesture = view.gesture(for: scrollView.panGestureRecognizer)
+
+        if isTransitioningInsteadScrolling {
+            continueTransitionInsteadScrolling(gesture: scrollingGesture, preventScrolling: true)
+        } else {
+            startTransitionInsteadScrollingIfNeeded(gesture: scrollingGesture)
+        }
+
+        lastScrollingGesture = scrollingGesture
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        print("FloatingSheetScrollingBehaviour.scrollViewWillEndDragging() isTransitioningInsteadScrolling = \(isTransitioningInsteadScrolling)")
+        if isTransitioningInsteadScrolling {
+            targetContentOffset.pointee = scrollView.contentOffset
+        }
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        print("FloatingScrollingBehaviour.didEndDragging(willDecelerate: \(decelerate))")
+        finishTransitionInsteadScrolling()
     }
 }

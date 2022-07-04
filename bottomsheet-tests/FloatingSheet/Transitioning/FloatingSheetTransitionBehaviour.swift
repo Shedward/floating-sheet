@@ -11,6 +11,8 @@ import simd
 final class FloatingSheetTransitionBehaviour: NSObject {
 
     weak var view: FloatingSheetView?
+    weak var scrollingBehaviour: FloatingSheetScrollingBehaviour?
+
     var states: [FloatingSheetState] = []
     var isTransitioning: Bool {
         currentTransition != nil
@@ -62,17 +64,20 @@ extension FloatingSheetTransitionBehaviour {
 
         animator.addCompletion { [weak self] position in
             guard let self = self else { return }
+
+            let updatedState: FloatingSheetState
             switch position {
             case .end:
-                self.view?.currentState = nextState
+                updatedState = nextState
             case .start:
-                self.view?.currentState = initialState
+                updatedState = initialState
             case .current:
-                break
+                updatedState = initialState
             @unknown default:
-                break
+                updatedState = initialState
             }
 
+            self.view?.currentState = updatedState
             self.view?.shouldInterceptTap = false
             self.currentTransition = nil
         }
@@ -188,13 +193,15 @@ extension FloatingSheetTransitionBehaviour {
             .filter { $0.state != currentState }
             .sorted { $0.position.y < $1.position.y }
 
-        let nextState: FloatingSheetState?
+        var nextState: FloatingSheetState?
 
         if gesture.velocity.y > 0 {
             nextState = possibleStatesOrderedByY
                 .first { $0.position.y > currentPosition.y }
                 .map { $0.state }
-        } else {
+        }
+
+        if gesture.velocity.y < 0 {
             nextState = possibleStatesOrderedByY
                 .reversed()
                 .first { $0.position.y < currentPosition.y }
