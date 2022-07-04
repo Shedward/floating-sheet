@@ -8,13 +8,15 @@
 import UIKit
 import simd
 
-class FloatingSheetTransitionBehaviour: NSObject {
+final class FloatingSheetTransitionBehaviour: NSObject {
 
     weak var view: FloatingSheetView?
-
     var states: [FloatingSheetState] = []
-    private var currentTransition: Transition?
+    var isTransitioning: Bool {
+        currentTransition != nil
+    }
 
+    private var currentTransition: Transition?
     private let animationDuration: TimeInterval = 0.25
     private let timing = UISpringTimingParameters(damping: 1.0, response: 0.35)
 
@@ -23,6 +25,7 @@ class FloatingSheetTransitionBehaviour: NSObject {
     }
 }
 
+// MARK: - Transitions
 extension FloatingSheetTransitionBehaviour {
     func setStateAnimated(to nextState: FloatingSheetState) {
         if let currentTransition = currentTransition {
@@ -89,6 +92,7 @@ extension FloatingSheetTransitionBehaviour {
     }
 }
 
+// MARK: - Dragging by gesture
 extension FloatingSheetTransitionBehaviour {
 
     func didPan(state: UIGestureRecognizer.State, gesture: Gesture) {
@@ -118,10 +122,7 @@ extension FloatingSheetTransitionBehaviour {
             currentTransition.animator.isReversed = false
             currentTransition.initialTranslation = currentTransition.currentTranslation()
         } else {
-            guard
-                let view = view,
-                let nextState = nextExpectedState(from: view.currentState, for: gesture)
-            else { return }
+            guard  let nextState = nextExpectedState(for: gesture) else { return }
 
             let newTransition = createNewTransition(to: nextState)
             newTransition?.animator.pauseAnimation()
@@ -169,9 +170,17 @@ extension FloatingSheetTransitionBehaviour {
 
 }
 
+// MARK: - States and positions
+
 extension FloatingSheetTransitionBehaviour {
 
-    private func nextExpectedState(from currentState: FloatingSheetState, for gesture: Gesture) -> FloatingSheetState? {
+    func haveTransition(for gesture: Gesture) -> Bool {
+        nextExpectedState(for: gesture) != nil
+    }
+
+    private func nextExpectedState(for gesture: Gesture) -> FloatingSheetState? {
+        guard let currentState = view?.currentState else { return nil }
+
         let currentPosition = position(for: currentState)
 
         let possibleStates = states.filter { $0 != currentState }
@@ -216,6 +225,8 @@ extension FloatingSheetTransitionBehaviour {
         states.map { PositionedState(state: $0, position: position(for: $0)) }
     }
 }
+
+// MARK: - Models
 
 extension FloatingSheetTransitionBehaviour {
     private struct PositionedState {

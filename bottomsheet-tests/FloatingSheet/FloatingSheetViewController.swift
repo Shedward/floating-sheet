@@ -42,9 +42,15 @@ final class FloatingSheetViewController: UIViewController {
         if let initialState = controller.floatingStates.first {
             contentView.setCurrentState(initialState, animated: false)
         }
+
+        setNeedsUpdateFloatingScroll()
     }
 
     func setState(_ state: FloatingSheetState, animated: Bool) {
         contentView.setCurrentState(state, animated: animated)
+    }
+
+    func setNeedsUpdateFloatingScroll() {
+        contentView.setFloatingScrollView(contentController.floatingScrollView)
     }
 }
