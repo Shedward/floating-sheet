@@ -11,11 +11,17 @@ protocol FloatingSheetPresentable: AnyObject {
 
     var floatingSheetController: FloatingSheetViewController? { get set }
     var floatingStates: [FloatingSheetState] { get }
+    var floatingScrollView: UIScrollView? { get }
 
-    func didTapOverlay()
+    func floatingSheetDidTapOverlay()
 }
 
 extension FloatingSheetPresentable {
-    func didTapOverlay() {
+
+    var floatingScrollView: UIScrollView? {
+        nil
+    }
+
+    func floatingSheetDidTapOverlay() {
     }
 }

@@ -1,5 +1,5 @@
 //
-//  ContentViewController.swift
+//  SimpleFloatingViewController.swift
 //  bottomsheet-tests
 //
 //  Created by Vladislav Maltsev on 28.06.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ContentViewController: UIViewController {
+final class SimpleFloatingViewController: UIViewController {
     weak var floatingSheetController: FloatingSheetViewController?
 
     private var fullState = FloatingSheetState(id: "full")
@@ -17,9 +17,9 @@ final class ContentViewController: UIViewController {
     @IBOutlet
     private var stackView: UIStackView!
 
-    static func create() -> ContentViewController {
+    static func create() -> SimpleFloatingViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController: ContentViewController = storyboard.instantiateViewController(identifier: "ContentViewController")
+        let viewController: SimpleFloatingViewController = storyboard.instantiateViewController(identifier: "SimpleFloatingViewController")
         return viewController
     }
 
@@ -28,7 +28,7 @@ final class ContentViewController: UIViewController {
 
         fullState.position = .full()
 
-        mediumState.position = .relativeBottomHeight(0.5, extendBottom: false)
+        mediumState.position = .aboveBottomEdge(relativeHeight: 0.5)
             .inseted(.init(top: 8, left: 8, bottom: 8, right: 8))
         mediumState.appearance.overlayColor = UIColor.black.withAlphaComponent(0.2)
         mediumState.appearance.cornerRadius = 24
@@ -39,13 +39,9 @@ final class ContentViewController: UIViewController {
             opacity: 0.4
         )
 
-        minimalState.position = .relativeBottomHeight(0.25, extendBottom: false)
+        minimalState.position = .aboveBottomEdge(relativeHeight: 0.25)
         minimalState.mask = .aboveView(stackView)
             .inseted(.init(top: -4, left: 0, bottom: 0, right: 0))
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
     }
 
     @IBAction
@@ -64,7 +60,7 @@ final class ContentViewController: UIViewController {
     }
 }
 
-extension ContentViewController: FloatingSheetPresentable {
+extension SimpleFloatingViewController: FloatingSheetPresentable {
     var floatingStates: [FloatingSheetState] {
         [mediumState,  fullState]
     }

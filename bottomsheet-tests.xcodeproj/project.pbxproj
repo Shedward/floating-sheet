@@ -11,6 +11,7 @@
 		630EBC9F286D98A000134EF5 /* Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630EBC9E286D98A000134EF5 /* Gesture.swift */; };
 		630EBCA8286E27B300134EF5 /* RevealServer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630EBCA1286E277800134EF5 /* RevealServer.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		630EBCA9286E27B300134EF5 /* RevealServer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 630EBCA1286E277800134EF5 /* RevealServer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63A225F5287246310008E966 /* ScrollingFloatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A225F4287246310008E966 /* ScrollingFloatingViewController.swift */; };
 		63C78F582869C7FC001FF97E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F572869C7FC001FF97E /* AppDelegate.swift */; };
 		63C78F5A2869C7FC001FF97E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F592869C7FC001FF97E /* SceneDelegate.swift */; };
 		63C78F5C2869C7FC001FF97E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F5B2869C7FC001FF97E /* ViewController.swift */; };
@@ -21,7 +22,7 @@
 		63C78F6F2869CB29001FF97E /* FloatingSheetPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */; };
 		63C78F712869CDB1001FF97E /* FloatingSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F702869CDB1001FF97E /* FloatingSheetView.swift */; };
 		63C78F74286AF466001FF97E /* UIView+TinyConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F73286AF466001FF97E /* UIView+TinyConstraints.swift */; };
-		63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F76286AF74F001FF97E /* ContentViewController.swift */; };
+		63C78F77286AF74F001FF97E /* SimpleFloatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F76286AF74F001FF97E /* SimpleFloatingViewController.swift */; };
 		63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F79286AFEAC001FF97E /* FloatingSheetState.swift */; };
 		63C78F7C286B0843001FF97E /* FloatingSheetPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */; };
 		63C78F7E286B0D60001FF97E /* FloatingSheetMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */; };
@@ -51,6 +52,7 @@
 		630EBC9C286D977C00134EF5 /* FloatingSheetTransitionBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatingSheetTransitionBehaviour.swift; sourceTree = "<group>"; };
 		630EBC9E286D98A000134EF5 /* Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gesture.swift; sourceTree = "<group>"; };
 		630EBCA1286E277800134EF5 /* RevealServer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RevealServer.xcframework; path = "../../Library/Application Support/Reveal/RevealServer/RevealServer.xcframework"; sourceTree = "<group>"; };
+		63A225F4287246310008E966 /* ScrollingFloatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollingFloatingViewController.swift; sourceTree = "<group>"; };
 		63C78F542869C7FC001FF97E /* bottomsheet-tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "bottomsheet-tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C78F572869C7FC001FF97E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63C78F592869C7FC001FF97E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,7 +65,7 @@
 		63C78F6E2869CB29001FF97E /* FloatingSheetPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetPresentable.swift; sourceTree = "<group>"; };
 		63C78F702869CDB1001FF97E /* FloatingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetView.swift; sourceTree = "<group>"; };
 		63C78F73286AF466001FF97E /* UIView+TinyConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+TinyConstraints.swift"; sourceTree = "<group>"; };
-		63C78F76286AF74F001FF97E /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
+		63C78F76286AF74F001FF97E /* SimpleFloatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleFloatingViewController.swift; sourceTree = "<group>"; };
 		63C78F79286AFEAC001FF97E /* FloatingSheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetState.swift; sourceTree = "<group>"; };
 		63C78F7B286B0843001FF97E /* FloatingSheetPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetPosition.swift; sourceTree = "<group>"; };
 		63C78F7D286B0D60001FF97E /* FloatingSheetMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetMask.swift; sourceTree = "<group>"; };
@@ -153,7 +155,8 @@
 			isa = PBXGroup;
 			children = (
 				63C78F5B2869C7FC001FF97E /* ViewController.swift */,
-				63C78F76286AF74F001FF97E /* ContentViewController.swift */,
+				63C78F76286AF74F001FF97E /* SimpleFloatingViewController.swift */,
+				63A225F4287246310008E966 /* ScrollingFloatingViewController.swift */,
 			);
 			path = MainViewController;
 			sourceTree = "<group>";
@@ -279,8 +282,9 @@
 				63C78F85286B512E001FF97E /* FloatingSheetUpdater.swift in Sources */,
 				63C78F83286B5097001FF97E /* FloatingSheetContext.swift in Sources */,
 				63C78F7A286AFEAC001FF97E /* FloatingSheetState.swift in Sources */,
-				63C78F77286AF74F001FF97E /* ContentViewController.swift in Sources */,
+				63C78F77286AF74F001FF97E /* SimpleFloatingViewController.swift in Sources */,
 				63C78F8D286D12C6001FF97E /* InstantPanGestureRecognizer.swift in Sources */,
+				63A225F5287246310008E966 /* ScrollingFloatingViewController.swift in Sources */,
 				63C78F5C2869C7FC001FF97E /* ViewController.swift in Sources */,
 				63C78F7C286B0843001FF97E /* FloatingSheetPosition.swift in Sources */,
 				63C78F8B286B823A001FF97E /* UIKit+Geometry.swift in Sources */,

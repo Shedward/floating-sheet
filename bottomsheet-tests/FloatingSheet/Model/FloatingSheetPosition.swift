@@ -27,22 +27,43 @@ struct FloatingSheetPosition {
         }
     }
 
-    static func relativeBottomHeight(_ relativeHeight: CGFloat, extendBottom: Bool) -> FloatingSheetPosition {
+    static func aboveBottomEdge(
+        relativeHeight: CGFloat,
+        extendsBelowBottom: Bool = false
+    ) -> FloatingSheetPosition {
         .init { context in
             let heigth = context.availableSize.height * relativeHeight
-            return FloatingSheetPosition.absoluteBottomHeight(heigth, extendBottom: extendBottom).frame(context)
+            return FloatingSheetPosition.aboveBottomEdge(
+                absoluteHeight: heigth,
+                extendsBelowBottom: extendsBelowBottom
+            )
+            .frame(context)
         }
     }
 
-    static func absoluteBottomHeight(_ absoluteHeight: CGFloat, extendBottom: Bool) -> FloatingSheetPosition {
+    static func aboveBottomEdge(
+        absoluteHeight: CGFloat,
+        extendsBelowBottom: Bool = false
+    ) -> FloatingSheetPosition {
         .init { context in
             CGRect(
                 x: 0,
                 y: context.availableSize.height - absoluteHeight,
                 width: context.availableSize.width,
-                height: extendBottom
+                height: extendsBelowBottom
                     ? context.availableSize.height
                     : absoluteHeight
+            )
+        }
+    }
+
+    static func belowBottomEdge() -> FloatingSheetPosition {
+        .init { context in
+            CGRect(
+                x: 0,
+                y: context.availableSize.height,
+                width: context.availableSize.width,
+                height: context.availableSize.height
             )
         }
     }

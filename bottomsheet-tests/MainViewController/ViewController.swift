@@ -11,7 +11,14 @@ class ViewController: UIViewController {
 
     @IBAction
     private func openBottomSheet() {
-        let viewController = ContentViewController.create()
+        let viewController = SimpleFloatingViewController.create()
+        let bottomSheet = FloatingSheetViewController(contentController: viewController)
+        present(bottomSheet, animated: true)
+    }
+
+    @IBAction
+    private func openScrollingBottomSheet() {
+        let viewController = ScrollingFloatingViewController.create()
         let bottomSheet = FloatingSheetViewController(contentController: viewController)
         present(bottomSheet, animated: true)
     }
